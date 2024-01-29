@@ -150,10 +150,10 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create components \
 -s config.priority='["0"]' \
 -s config.connectionUrl=${KEYCLOAK_LDAP_CONNECTION_URL} \
 -s config.editMode='["READ_ONLY"]' \
--s config.usersDn=${KEYCLOAK_USERS_DN} \
--s config.serverPrincipal=${KEYCLOAK_SERVER_PRINCIPLE} \
--s config.bindDn=${KEYCLOAK_BIND_DN} \
--s config.bindCredential=${KEYCLOAK_BIND_CREDENTIAL} \
+-s config.usersDn="${KEYCLOAK_USERS_DN}" \
+-s config.serverPrincipal="${KEYCLOAK_SERVER_PRINCIPLE}" \
+-s config.bindDn="${KEYCLOAK_BIND_DN}" \
+-s config.bindCredential="${KEYCLOAK_BIND_CREDENTIAL}" \
 -s 'config.fullSyncPeriod=["86400"]' \
 -s 'config.changedSyncPeriod=["-1"]' \
 -s 'config.cachePolicy=["NO_CACHE"]' \
