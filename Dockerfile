@@ -18,7 +18,8 @@ RUN mkdir /unicopy \
 FROM ${RUN_IMAGE} as runner
 COPY --from=builder /unicopy /
 USER root
-RUN mkdir /docker-entrypoint-initdb.d
+RUN mkdir /docker-entrypoint-initdb.d \
+    && microdnf install jq vim
 USER keycloak
 ENTRYPOINT ["/docker-entrypoint.sh"]
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --start-interval=5s --retries=5 CMD /docker-healthcheck.sh

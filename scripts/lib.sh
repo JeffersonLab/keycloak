@@ -167,7 +167,7 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create components \
 -s config.usernameLDAPAttribute=${KEYCLOAK_USERNAME_ATTR} \
 -s config.rdnLDAPAttribute=${KEYCLOAK_RDN} \
 -s config.uuidLDAPAttribute=${KEYCLOAK_UUID} \
--s config.userObjectClasses=${KEYCLOAK_OBJ_CLASSES} \
+-s config.userObjectClasses="${KEYCLOAK_OBJ_CLASSES}" \
 -s 'config.searchScope=["1"]' \
 -s 'config.useTruststoreSpi=["ldapsOnly"]' \
 -s 'config.connectionPooling=["true"]' \
@@ -175,7 +175,7 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create components \
 -s config.allowKerberosAuthentication=${KEYCLOAK_SPNEGO} \
 -s config.keyTab=${KEYCLOAK_KEYTAB} \
 -s config.kerberosRealm=${KEYCLOAK_KERBEROS_REALM} \
--s 'config.useKerberosForPasswordAuthentication=["true"]'
+-s 'config.useKerberosForPasswordAuthentication=["false"]'
 }
 
 set_first_name_mapper_attribute() {
@@ -192,7 +192,7 @@ MAPPER_ID=`${KEYCLOAK_HOME}/bin/kcadm.sh get components -r ${KEYCLOAK_REALM} -q 
 
 ${KEYCLOAK_HOME}/bin/kcadm.sh update components/${MAPPER_ID} \
                               -r "${KEYCLOAK_REALM}" \
-                              -s config.ldap.attribute=${KEYCLOAK_FIRSTNAME_ATTR}
+                              -s 'config."ldap.attribute"'="${KEYCLOAK_FIRSTNAME_ATTR}"
 }
 
 create_role_mapper() {
