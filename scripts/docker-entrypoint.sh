@@ -26,9 +26,6 @@ done
 echo "---------------------"
 echo "| Step 3: Configure |"
 echo "---------------------"
-echo "---------------------"
-echo "| Step 3: Configure |"
-echo "---------------------"
 # Run custom scripts provided by the user
 # usage: run_custom_scripts PATH
 #    ie: run_custom_scripts /container-entrypoint-initdb.d
