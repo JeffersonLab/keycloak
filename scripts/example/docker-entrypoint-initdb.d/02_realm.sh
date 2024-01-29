@@ -1,9 +1,16 @@
 #!/bin/bash
 
+. /lib.sh
+
 echo "----------------"
 echo "| Create Realm |"
 echo "----------------"
-${KEYCLOAK_HOME}/bin/kcadm.sh create realms -s id=${KEYCLOAK_REALM} -s realm="${KEYCLOAK_REALM}" -s enabled=true -s displayName="${KEYCLOAK_REALM_DISPLAY_NAME}" -s loginWithEmailAllowed=false
+# KEYCLOAK_REALM set in 00_config.env as it's a shared value
+KEYCLOAK_SECRET=yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB
+KEYCLOAK_REALM_DISPLAY_NAME="TEST REALM"
+KEYCLOAK_SESSION_IDLE_TIMEOUT=30
+KEYCLOAK_SESSION_MAX_LIFESPAN=30
+create_realm
 
 
 

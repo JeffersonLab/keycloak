@@ -11,7 +11,8 @@ COPY . /app
 ## Let's minimize layers in final-product by organizing files into a single copy structure
 RUN mkdir /unicopy \
     && cp /app/scripts/docker-entrypoint.sh /unicopy \
-    && cp /app/scripts/docker-healthcheck.sh /unicopy
+    && cp /app/scripts/docker-healthcheck.sh /unicopy \
+    && cp /app/scripts/lib.sh /unicopy
 
 ################## Stage 1
 FROM ${RUN_IMAGE} as runner

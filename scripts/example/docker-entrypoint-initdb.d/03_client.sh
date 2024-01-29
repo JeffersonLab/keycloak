@@ -1,9 +1,13 @@
 #!/bin/bash
 
+. /lib.sh
+
 echo "-----------------"
 echo "| Create Client |"
 echo "-----------------"
-${KEYCLOAK_HOME}/bin/kcadm.sh create clients -r "${KEYCLOAK_REALM}" -s clientId=${KEYCLOAK_RESOURCE} -s 'redirectUris=["https://localhost:8443/'${KEYCLOAK_RESOURCE}'/*"]' -s secret=${KEYCLOAK_SECRET} -s 'serviceAccountsEnabled=true'
-${KEYCLOAK_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_RESOURCE} --cclientid realm-management --rolename view-users
-${KEYCLOAK_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_RESOURCE} --cclientid realm-management --rolename view-authorization
-${KEYCLOAK_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_RESOURCE} --cclientid realm-management --rolename view-realm
+# KEYCLOAK_RESOURCE set in 00_config.env as it's a shared value
+KEYCLOAK_CLIENT_NAME=test
+KEYCLOAK_SERVICE_ACCOUNT_ENABLED=true
+KEYCLOAK_REDIRECT_URIS='["https://localhost:8443/test/*"]'
+KEYCLOAK_SECRET=yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB
+create_client

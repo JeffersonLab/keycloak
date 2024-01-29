@@ -1,9 +1,12 @@
 #!/bin/bash
 
+. /lib.sh
+
 echo "---------"
 echo "| Login |"
 echo "---------"
-${KEYCLOAK_HOME}/bin/kcadm.sh config credentials --server "${KEYCLOAK_SERVER_URL}" --realm master --user "${KEYCLOAK_ADMIN}" --password "${KEYCLOAK_ADMIN_PASSWORD}"
+# KEYCLOAK_ADMIN, KEYCLOAK_ADMIN_PASSWORD, KEYCLOAK_HOME, KEYCLOAK_SERVER_URL already set as used by entrypoint
+login
 
 
 

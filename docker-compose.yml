@@ -14,3 +14,4 @@ services:
       TZ: 'America/New_York'
     volumes:
       - ./scripts/example/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./scripts/lib.sh:/lib.sh
