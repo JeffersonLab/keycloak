@@ -16,3 +16,5 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./scripts/lib.sh:/lib.sh

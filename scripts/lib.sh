@@ -167,7 +167,7 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create components \
 -s config.usernameLDAPAttribute=${KEYCLOAK_USERNAME_ATTR} \
 -s config.rdnLDAPAttribute=${KEYCLOAK_RDN} \
 -s config.uuidLDAPAttribute=${KEYCLOAK_UUID} \
--s config.userObjectClasses="${KEYCLOAK_OBJ_CLASSES}" \
+-s config.userObjectClasses="${KEYCLOAK_USER_OBJ_CLASSES}" \
 -s 'config.searchScope=["1"]' \
 -s 'config.useTruststoreSpi=["ldapsOnly"]' \
 -s 'config.connectionPooling=["true"]' \
