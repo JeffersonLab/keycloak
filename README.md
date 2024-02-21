@@ -42,4 +42,4 @@ Environment variables:
 ## Release
 1. Create a new release on the GitHub Releases page.  The release should enumerate changes and link issues.
 1. [Publish to DockerHub](https://github.com/JeffersonLab/keycloak/actions/workflows/docker-publish.yml) GitHub Action should run automatically. 
-1. Bump and commit quick start [image version](https://github.com/JeffersonLab/keycloak/blob/main/docker-compose.override.yml).
+1. Bump and commit quick start [image version](https://github.com/JeffersonLab/keycloak/blob/main/compose.override.yaml).
