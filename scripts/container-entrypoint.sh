@@ -87,7 +87,7 @@ function run_custom_scripts_recursive {
 
 if [ ! -f /${KEYCLOAK_HOME}/setup-complete ]; then
 echo -e "Running setup scripts"
-run_custom_scripts "/docker-entrypoint-initdb.d"
+run_custom_scripts "/container-entrypoint-initdb.d"
 touch /${KEYCLOAK_HOME}/setup-complete
 else
 echo -e "Setup already run; skipping"

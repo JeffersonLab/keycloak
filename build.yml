@@ -1,8 +1,0 @@
-services:
-  keycloak:
-    extends:
-      file: docker-compose.yml
-      service: keycloak
-    build:
-      context: .
-      dockerfile: Dockerfile

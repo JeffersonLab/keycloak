@@ -1,0 +1,33 @@
+services:
+  oracle:
+    image: gvenzl/oracle-xe:21.3.0
+    hostname: oracle
+    container_name: oracle
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    environment:
+      ORACLE_PASSWORD: testing
+      TZ: 'America/New_York'
+    volumes:
+      - ./container/oracle/initdb.d:/container-entrypoint-initdb.d
+
+  dirsrv:
+    image: jeffersonlab/dirsrv:1.0.0
+    hostname: dirsrv
+    container_name: dirsrv
+    ports:
+      - "3389:3389"
+      - "3636:3636"
+    environment:
+      DS_DM_PASSWORD: password
+      DS_SUFFIX_NAME: dc=example,dc=com
+      DS_BACKEND_NAME: example
+    volumes:
+      - ./container/dirsrv/initdb.d:/docker-entrypoint-initdb.d
