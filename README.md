@@ -28,7 +28,7 @@ http://localhost:8080
 *Note*: Login with username `admin` and password `admin` 
 
 ## Configure
-Mount a volume at `/docker-entrypoint-initdb.d` containing bash scripts to run, ordered by name ascending.  See [example](https://github.com/JeffersonLab/keycloak/tree/main/scripts/example/docker-entrypoint-initdb.d).
+Mount a volume at `/container-entrypoint-initdb.d` containing bash scripts to run, ordered by name ascending.  See [example](https://github.com/JeffersonLab/keycloak/tree/main/container/keycloak/initdb.d).
 
 Environment variables:
 | Name | Description |
