@@ -1,5 +1,5 @@
 # keycloak [![Docker](https://img.shields.io/docker/v/jeffersonlab/keycloak?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/keycloak)
-Configurable [Keycloak](https://www.keycloak.org/) Docker image
+Configurable [Keycloak](https://www.keycloak.org/) Docker image and bash setup scripts.
 
 ---
  - [Overview](https://github.com/JeffersonLab/keycloak#overview)
