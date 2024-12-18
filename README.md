@@ -40,6 +40,7 @@ Environment variables:
 | KC_BOOTSTRAP_ADMIN_PASSWORD | Admin password |
 
 ## Release
-1. Create a new release on the GitHub Releases page.  The release should enumerate changes and link issues.
-1. [Publish to DockerHub](https://github.com/JeffersonLab/keycloak/actions/workflows/docker-publish.yml) GitHub Action should run automatically. 
-1. Bump and commit quick start [image version](https://github.com/JeffersonLab/keycloak/blob/main/compose.override.yaml).
+1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
+2. The [CD](https://github.com/JeffersonLab/keycloak/blob/main/.github/workflows/cd.yaml) GitHub Action should run automatically invoking:
+    - The [Create release](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/gh-release.yaml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.
+    - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yaml) GitHub Action to create a new demo Docker image.
