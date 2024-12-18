@@ -11,6 +11,9 @@ Configurable [Keycloak](https://www.keycloak.org/) Docker image and bash setup s
 ## Overview
 This project provides a docker image which extends the production-oriented [keycloak](https://quay.io/repository/keycloak/keycloak) and adds features for development and testing.   The Jefferson Lab image sets up a Docker healthcheck and Docker entrypoint, installs client tools (see [lib.sh](https://github.com/JeffersonLab/keycloak/blob/main/scripts/lib.sh)), and adds some default configuration for the Jefferson Lab environment.  The entrypoint integrates with the healthcheck such that the container is "healthy" only when keycloak is both running and configured.  Configuration is supported via environment variables and a conventional directory named `/container-entrypoint-initdb.d` of bash scripts that can be overwritten by mounting a volume.
 
+- 1.x version based on Keycloak 20.x
+- 2.x version based on Keycloak 26.x
+
 ## Quick Start with Compose
 1. Grab project
 ```
