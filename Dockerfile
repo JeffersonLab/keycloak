@@ -2,13 +2,13 @@
 ARG BUILD_IMAGE=registry.access.redhat.com/ubi9
 ARG RUN_IMAGE=quay.io/keycloak/keycloak:26.0.7
 
-ARG ORACLE_DRIVER_URL=https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/21.7.0.0/ojdbc11-21.7.0.0.jar
-ARG ORACLE_DRIVER_NAME=ojdbc11-21.7.0.0.jar
+ARG ORACLE_DRIVER_URL=https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc11/23.5.0.24.07/ojdbc11-23.5.0.24.07.jar
+ARG ORACLE_NLS_URL=https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.5.0.24.07/orai18n-23.5.0.24.07.jar
 
 ################## Stage 0
 FROM ${BUILD_IMAGE} as builder
 ARG ORACLE_DRIVER_URL
-ARG ORACLE_DRIVER_NAME
+ARG ORACLE_NLS_URL
 
 RUN mkdir -p /mnt/rootfs
 RUN dnf install --installroot /mnt/rootfs jq vim curl --releasever 9 --setopt install_weak_deps=false --nodocs -y && \
@@ -20,15 +20,21 @@ WORKDIR /
 COPY ./scripts /mnt/rootfs
 
 # Download Oracle DB Driver
-RUN dnf install wget --nodocs -y
-
 RUN mkdir -p /mnt/rootfs/opt/keycloak/providers
-
-RUN wget -O /mnt/rootfs/opt/keycloak/providers/"${ORACLE_DRIVER_NAME}" "${ORACLE_DRIVER_URL}"
+ADD --chown=keycloak:keycloak --chmod=644 "${ORACLE_DRIVER_URL}" /mnt/rootfs/opt/keycloak/providers/ojdbc11.jar
+ADD --chown=keycloak:keycloak --chmod=644 "${ORACLE_NLS_URL}" /mnt/rootfs/opt/keycloak/providers/orai18n.jar
 
 ################## Stage 1
 FROM ${RUN_IMAGE} as runner
+
+ENV KC_HEALTH_ENABLED=true
+ENV KC_METRICS_ENABLED=true
+ENV KC_DB=oracle
+
 COPY --from=builder /mnt/rootfs /
+
+RUN /opt/keycloak/bin/kc.sh build
+
 USER root
 RUN mkdir /container-entrypoint-initdb.d
 USER keycloak
