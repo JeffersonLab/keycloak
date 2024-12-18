@@ -1,8 +1,8 @@
 #!/bin/bash
 
 login() {
-VARIABLES=(KEYCLOAK_ADMIN
-           KEYCLOAK_ADMIN_PASSWORD
+VARIABLES=(KC_BOOTSTRAP_ADMIN_USERNAME
+           KC_BOOTSTRAP_ADMIN_PASSWORD
            KEYCLOAK_HOME
            KEYCLOAK_SERVER_URL)
 
@@ -14,8 +14,8 @@ done
 ${KEYCLOAK_HOME}/bin/kcadm.sh config credentials \
                              --server "${KEYCLOAK_SERVER_URL}" \
                              --realm master \
-                             --user "${KEYCLOAK_ADMIN}" \
-                             --password "${KEYCLOAK_ADMIN_PASSWORD}"
+                             --user "${KC_BOOTSTRAP_ADMIN_USERNAME}" \
+                             --password "${KC_BOOTSTRAP_ADMIN_PASSWORD}"
 }
 
 create_realm() {

@@ -10,13 +10,13 @@ FROM ${BUILD_IMAGE} as builder
 ARG ORACLE_DRIVER_URL
 ARG ORACLE_NLS_URL
 
+USER root
+
 RUN mkdir -p /mnt/rootfs
 RUN dnf install --installroot /mnt/rootfs jq vim curl --releasever 9 --setopt install_weak_deps=false --nodocs -y && \
     dnf --installroot /mnt/rootfs clean all && \
     rpm --root /mnt/rootfs -e --nodeps setup
 
-USER root
-WORKDIR /
 COPY ./scripts /mnt/rootfs
 
 # Download Oracle DB Driver
@@ -31,12 +31,19 @@ ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
 ENV KC_DB=oracle
 
+USER root
+
 COPY --from=builder /mnt/rootfs /
+
+# for demonstration purposes only, please make sure to use proper certificates in production instead
+WORKDIR /opt/keycloak
+RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
 
 RUN /opt/keycloak/bin/kc.sh build
 
-USER root
-RUN mkdir /container-entrypoint-initdb.d
+RUN mkdir /container-entrypoint-initdb.d \
+    && chown -R keycloak:keycloak /opt/keycloak
+
 USER keycloak
 ENTRYPOINT ["/container-entrypoint.sh"]
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --start-interval=5s --retries=5 CMD /container-healthcheck.sh
