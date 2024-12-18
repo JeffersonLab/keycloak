@@ -30,13 +30,12 @@ FROM ${RUN_IMAGE} as runner
 ENV KC_HOME=/opt/keycloak
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
-ENV KC_DB=oracle
 
 USER root
 
 COPY --from=builder /mnt/rootfs /
 
-RUN ${KC_HOME}/bin/kc.sh build
+#RUN ${KC_HOME}/bin/kc.sh build
 
 RUN mkdir /container-entrypoint-initdb.d \
     && chown -R keycloak:keycloak ${KC_HOME}
