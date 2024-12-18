@@ -23,7 +23,7 @@ docker compose up
 ```
 3. Navigate to admin console
 ```
-http://localhost:8080
+http://localhost:8081/auth
 ```
 *Note*: Login with username `admin` and password `admin` 
 
@@ -33,11 +33,11 @@ Mount a volume at `/container-entrypoint-initdb.d` containing bash scripts to ru
 Environment variables:
 | Name | Description |
 |------|-------------|
-| KEYCLOAK_FRONTEND_HOSTNAME | Front end hostname |
-| KEYCLOAK_FRONTEND_PORT | Front end port |
-| KEYCLOAK_SERVER_URL | Backend URL |
-| KEYCLOAK_ADMIN | Admin username |
-| KEYCLOAK_ADMIN_PASSWORD | Admin password |
+| KC_FRONTEND_URL | Front end scheme, hostname, port, and relative path |
+| KC_BACKEND_URL | Back end scheme, hostname, port, and relative path |
+| KC_HTTP_RELATIVE_PATH | Relative path, probably must match KC_FRONTEND_URL and KC_BACKEND_URL |
+| KC_BOOTSTRAP_ADMIN_USERNAME | Admin username |
+| KC_BOOTSTRAP_ADMIN_PASSWORD | Admin password |
 
 ## Release
 1. Create a new release on the GitHub Releases page.  The release should enumerate changes and link issues.

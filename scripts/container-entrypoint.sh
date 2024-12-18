@@ -1,25 +1,23 @@
 #!/bin/bash
 
-export KEYCLOAK_HOME='/opt/keycloak'
-
 echo "--------------------------"
 echo "| Step 1: Start Keycloak |"
 echo "--------------------------"
 
-# --hostname https://${KEYCLOAK_FRONTEND_HOSTNAME}:${KEYCLOAK_FRONTEND_PORT}/auth --hostname-backchannel-dynamic true
-# --hostname-strict false --http-enabled true
-${KEYCLOAK_HOME}/bin/kc.sh start-dev &
+# start-dev implies --hostname-strict false --http-enabled true
+# --hostname-backchannel-dynamic true ?
+${KC_HOME}/bin/kc.sh start-dev --hostname ${KC_FRONTEND_URL} --hostname-admin ${KC_FRONTEND_URL} --hostname-debug true --http-relative-path ${KC_HTTP_RELATIVE_PATH} &
 
 echo "--------------------------------------"
 echo "| Step 2: Wait for Keycloak to start |"
 echo "--------------------------------------"
 
-if [[ -z "${KEYCLOAK_SERVER_URL}" ]]; then
-    echo "Skipping Keycloak Setup: Must provide KEYCLOAK_SERVER_URL in environment"
+if [[ -z "${KC_BACKEND_URL}" ]]; then
+    echo "Skipping Keycloak Setup: Must provide KC_BACKEND_URL in environment"
     return 0
 fi
 
-until curl ${KEYCLOAK_SERVER_URL} -sf -o /dev/null;
+until curl ${KC_BACKEND_URL} -sf -o /dev/null;
 do
   echo $(date) " Still waiting for Keycloak to start..."
   sleep 5
@@ -87,10 +85,10 @@ function run_custom_scripts_recursive {
   done
 }
 
-if [ ! -f /${KEYCLOAK_HOME}/setup-complete ]; then
+if [ ! -f /${KC_HOME}/setup-complete ]; then
 echo -e "Running setup scripts"
 run_custom_scripts "/container-entrypoint-initdb.d"
-touch /${KEYCLOAK_HOME}/setup-complete
+touch /${KC_HOME}/setup-complete
 else
 echo -e "Setup already run; skipping"
 fi
