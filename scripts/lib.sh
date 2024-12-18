@@ -1,25 +1,25 @@
 #!/bin/bash
 
 login() {
-VARIABLES=(KEYCLOAK_ADMIN
-           KEYCLOAK_ADMIN_PASSWORD
-           KEYCLOAK_HOME
-           KEYCLOAK_SERVER_URL)
+VARIABLES=(KC_BOOTSTRAP_ADMIN_USERNAME
+           KC_BOOTSTRAP_ADMIN_PASSWORD
+           KC_HOME
+           KC_BACKEND_URL)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh config credentials \
-                             --server "${KEYCLOAK_SERVER_URL}" \
+${KC_HOME}/bin/kcadm.sh config credentials \
+                             --server "${KC_BACKEND_URL}" \
                              --realm master \
-                             --user "${KEYCLOAK_ADMIN}" \
-                             --password "${KEYCLOAK_ADMIN_PASSWORD}"
+                             --user "${KC_BOOTSTRAP_ADMIN_USERNAME}" \
+                             --password "${KC_BOOTSTRAP_ADMIN_PASSWORD}"
 }
 
 create_realm() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_REALM
            KEYCLOAK_REALM_DISPLAY_NAME
            KEYCLOAK_SESSION_IDLE_TIMEOUT
@@ -30,7 +30,7 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh create realms \
+${KC_HOME}/bin/kcadm.sh create realms \
                               -s id="${KEYCLOAK_REALM}" \
                               -s realm="${KEYCLOAK_REALM}" \
                               -s enabled=true \
@@ -42,7 +42,7 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create realms \
 
 create_client() {
 VARIABLES=(KEYCLOAK_CLIENT_NAME
-           KEYCLOAK_HOME
+           KC_HOME
            KEYCLOAK_REALM
            KEYCLOAK_REDIRECT_URIS
            KEYCLOAK_SECRET
@@ -53,7 +53,7 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh create clients \
+${KC_HOME}/bin/kcadm.sh create clients \
                               -r "${KEYCLOAK_REALM}" \
                               -s clientId="${KEYCLOAK_CLIENT_NAME}" \
                               -s id="${KEYCLOAK_CLIENT_NAME}" \
@@ -63,14 +63,14 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create clients \
                               -s secret="${KEYCLOAK_SECRET}"
 
 if [ ${KEYCLOAK_SERVICE_ACCOUNT_ENABLED} = 'true' ] ; then
-${KEYCLOAK_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-users
-${KEYCLOAK_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-authorization
-${KEYCLOAK_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-realm
+${KC_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-users
+${KC_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-authorization
+${KC_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-realm
 fi
 }
 
 create_role() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_REALM
            KEYCLOAK_ROLE_NAME)
 
@@ -79,13 +79,13 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh create roles \
+${KC_HOME}/bin/kcadm.sh create roles \
                               -r "${KEYCLOAK_REALM}" \
                               -s name="${KEYCLOAK_ROLE_NAME}"
 }
 
 create_user() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_EMAIL
            KEYCLOAK_FIRSTNAME
            KEYCLOAK_LASTNAME
@@ -97,7 +97,7 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh create users \
+${KC_HOME}/bin/kcadm.sh create users \
                               -r "${KEYCLOAK_REALM}" \
                               -s username="${KEYCLOAK_USERNAME}" \
                               -s firstName="${KEYCLOAK_FIRSTNAME}" \
@@ -105,14 +105,14 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create users \
                               -s email="${KEYCLOAK_EMAIL}" \
                               -s enabled=true
 
-${KEYCLOAK_HOME}/bin/kcadm.sh set-password \
+${KC_HOME}/bin/kcadm.sh set-password \
                               -r "${KEYCLOAK_REALM}" \
                                --username "${KEYCLOAK_USERNAME}" \
                                --new-password "${KEYCLOAK_PASSWORD}"
 }
 
 assign_role() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_REALM
            KEYCLOAK_ROLE_NAME
            KEYCLOAK_USERNAME)
@@ -122,14 +122,14 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh add-roles \
+${KC_HOME}/bin/kcadm.sh add-roles \
                               -r "${KEYCLOAK_REALM}" \
                               --uusername "${KEYCLOAK_USERNAME}" \
                               --rolename "${KEYCLOAK_ROLE_NAME}"
 }
 
 create_ldap_storage_provider() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_REALM)
 
 for i in "${!VARIABLES[@]}"; do
@@ -137,7 +137,7 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh create components \
+${KC_HOME}/bin/kcadm.sh create components \
 -r "${KEYCLOAK_REALM}" \
 -s parentId="${KEYCLOAK_REALM}" \
 -s id=${KEYCLOAK_REALM}-ldap-provider \
@@ -179,7 +179,7 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create components \
 }
 
 set_first_name_mapper_attribute() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_REALM
            KEYCLOAK_FIRSTNAME_ATTR)
 
@@ -188,15 +188,15 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-MAPPER_ID=`${KEYCLOAK_HOME}/bin/kcadm.sh get components -r ${KEYCLOAK_REALM} -q name='first name' --fields id | jq -r .[0].id`
+MAPPER_ID=`${KC_HOME}/bin/kcadm.sh get components -r ${KEYCLOAK_REALM} -q name='first name' --fields id | jq -r .[0].id`
 
-${KEYCLOAK_HOME}/bin/kcadm.sh update components/${MAPPER_ID} \
+${KC_HOME}/bin/kcadm.sh update components/${MAPPER_ID} \
                               -r "${KEYCLOAK_REALM}" \
                               -s 'config."ldap.attribute"'="${KEYCLOAK_FIRSTNAME_ATTR}"
 }
 
 create_role_mapper() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_REALM)
 
 for i in "${!VARIABLES[@]}"; do
@@ -204,7 +204,7 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh create components \
+${KC_HOME}/bin/kcadm.sh create components \
 -r ${KEYCLOAK_REALM} \
 -s parentId=${KEYCLOAK_REALM}-ldap-provider \
 -s id=${KEYCLOAK_REALM}-ldap-role-mapper \
@@ -224,7 +224,7 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create components \
 }
 
 run_user_storage_sync() {
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_PROVIDER
            KEYCLOAK_REALM)
 
@@ -233,7 +233,7 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-${KEYCLOAK_HOME}/bin/kcadm.sh create \
+${KC_HOME}/bin/kcadm.sh create \
                               -r ${KEYCLOAK_REALM} \
                               user-storage/${KEYCLOAK_PROVIDER}/sync?action=triggerFullSync
 }
