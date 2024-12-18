@@ -6,7 +6,9 @@ echo "--------------------------"
 echo "| Step 1: Start Keycloak |"
 echo "--------------------------"
 
-${KEYCLOAK_HOME}/bin/kc.sh start-dev --hostname https://${KEYCLOAK_FRONTEND_HOSTNAME}:${KEYCLOAK_FRONTEND_PORT}/auth --hostname-backchannel-dynamic true &
+# --hostname https://${KEYCLOAK_FRONTEND_HOSTNAME}:${KEYCLOAK_FRONTEND_PORT}/auth --hostname-backchannel-dynamic true
+# --hostname-strict false --http-enabled true
+${KEYCLOAK_HOME}/bin/kc.sh start-dev &
 
 echo "--------------------------------------"
 echo "| Step 2: Wait for Keycloak to start |"

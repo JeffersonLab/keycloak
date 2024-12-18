@@ -27,6 +27,7 @@ ADD --chown=keycloak:keycloak --chmod=644 "${ORACLE_NLS_URL}" /mnt/rootfs/opt/ke
 ################## Stage 1
 FROM ${RUN_IMAGE} as runner
 
+ENV KEYCLOAK_HOME=/opt/keycloak
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
 ENV KC_DB=oracle
@@ -35,15 +36,12 @@ USER root
 
 COPY --from=builder /mnt/rootfs /
 
-# for demonstration purposes only, please make sure to use proper certificates in production instead
-WORKDIR /opt/keycloak
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
-
 RUN /opt/keycloak/bin/kc.sh build
 
 RUN mkdir /container-entrypoint-initdb.d \
     && chown -R keycloak:keycloak /opt/keycloak
 
 USER keycloak
+WORKDIR /opt/keycloak
 ENTRYPOINT ["/container-entrypoint.sh"]
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --start-interval=5s --retries=5 CMD /container-healthcheck.sh
