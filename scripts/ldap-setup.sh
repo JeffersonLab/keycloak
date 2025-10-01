@@ -124,7 +124,7 @@ ${KEYCLOAK_HOME}/bin/kcadm.sh create components -r ${KEYCLOAK_REALM} -s parentId
 }
 
 run_sync() {
-${KEYCLOAK_HOME}/bin/kcadm.sh create -r ${KEYCLOAK_REALM} user-storage/ace-ldap-provider/sync?action=triggerFullSync
+${KEYCLOAK_HOME}/bin/kcadm.sh create -r ${KEYCLOAK_REALM} user-storage/${KEYCLOAK_REALM}-ldap-provider/sync?action=triggerFullSync
 }
 
 if [ ! -z "$2" ]
