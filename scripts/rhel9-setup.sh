@@ -1,6 +1,7 @@
 #!/bin/bash
 
-FUNCTIONS=(create_user_and_group
+FUNCTIONS=(adjust_java
+           create_user_and_group
            download
            unzip_and_chmod
            create_symbolic_links
@@ -43,10 +44,10 @@ done
 
 KEYCLOAK_APP_HOME=${KEYCLOAK_USER_HOME}/${KEYCLOAK_VERSION}
 
-remove_java_11() {
-# We're assuming this leaves only JDK17
+adjust_java() {
+yum install java-21-openjdk -y
 yum remove java-11-openjdk-headless -y
-alternatives --auto java
+yum remove java-17-openjdk-headless -y
 }
 
 create_user_and_group() {
