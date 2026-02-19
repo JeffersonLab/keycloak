@@ -5,8 +5,7 @@ echo "| Step 1: Start Keycloak |"
 echo "--------------------------"
 
 # start-dev implies --hostname-strict false --http-enabled true
-# --hostname-backchannel-dynamic true ?
-${KC_HOME}/bin/kc.sh start-dev --hostname ${KC_FRONTEND_URL} --hostname-admin ${KC_FRONTEND_URL} --hostname-debug true --http-relative-path ${KC_HTTP_RELATIVE_PATH} &
+${KC_HOME}/bin/kc.sh start-dev --hostname ${KC_FRONTEND_URL} --hostname-admin ${KC_FRONTEND_URL} --hostname-backchannel-dynamic true --hostname-debug true --http-relative-path ${KC_HTTP_RELATIVE_PATH} &
 
 echo "--------------------------------------"
 echo "| Step 2: Wait for Keycloak to start |"
