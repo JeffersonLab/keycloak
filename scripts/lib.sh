@@ -237,3 +237,46 @@ ${KC_HOME}/bin/kcadm.sh create \
                               -r ${KEYCLOAK_REALM} \
                               user-storage/${KEYCLOAK_PROVIDER}/sync?action=triggerFullSync
 }
+
+create_roles_mapper() {
+  # Update the realm-based roles scope so that a user's group IDs are put into the access token as a claim that all
+  # clients get.  This allows clients like apache httpd to perform group-based authorization using the claim info in the
+  # access token.  This change affects all clients.  A similar approach can be used on a per-client basis if needed
+  # (clients -> <client_name> -> scopes -> <app-dedicated scope> -> Add Realm Role -> Include in Access/ID token.
+  # API described here -
+  # https://www.keycloak.org/docs-api/latest/rest-api/index.html#_get_adminrealmsrealmclient_templatesclient_scope_idprotocol_mappersmodelsid
+
+VARIABLES=(KEYCLOAK_HOME
+           KEYCLOAK_REALM)
+
+  for i in "${!VARIABLES[@]}"; do
+    var=${VARIABLES[$i]}
+    [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
+  done
+
+  # Find the ID associated with the roles realm scope.
+  scope_id=$("${KEYCLOAK_HOME}"/bin/kcadm.sh \
+    get client-scopes -r "${KEYCLOAK_REALM}" --fields id,name \
+    | jq -r '.[] | select(.name=="roles") | .id')
+
+  # Find the ID for the roles realm scope mapper.  The mapper is a keycloak specific concept for customizing what scope
+  # info appears where.
+  mapper_id=$("${KEYCLOAK_HOME}"/bin/kcadm.sh \
+    get "client-scopes/${scope_id}/protocol-mappers/models" \
+    -r "${KEYCLOAK_REALM}" \
+    | jq -r '.[] | select(.name=="realm roles") | .id')
+
+  # keycloak wants the entire config object sent back, not just piecemeal updates.  Must get the whole config and update
+  # the needed fields.
+  jq_str='.config["id.token.claim"]="true"'
+  jq_str+=' | .config["access.token.claim"]="true"'
+  jq_str+=' | .config["userinfo.token.claim"]="true"'
+  new_config=$("${KEYCLOAK_HOME}"/bin/kcadm.sh \
+    get "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
+    | jq "$jq_str")
+
+  # apply the new config.  Use bash-specific process substitution feature for convenience.
+  "${KEYCLOAK_HOME}"/bin/kcadm.sh \
+    update "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
+    -f <(echo "${new_config}")
+}

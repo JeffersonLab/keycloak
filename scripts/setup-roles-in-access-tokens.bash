@@ -25,16 +25,16 @@ if [[ $# -eq 0 ]] ; then
     exit 0
 fi
 
-if [ ! -z "$1" ] && [ -f "$1" ]
+if [ -n "$1" ] && [ -f "$1" ]
 then
 echo "Loading environment $1"
-. $1
+. "$1"
 fi
 
-if [ ! -z "$COMMON_ENV_FILE" ] && [ -f "$COMMON_ENV_FILE" ]
+if [ -n "$COMMON_ENV_FILE" ] && [ -f "$COMMON_ENV_FILE" ]
 then
 echo "Loading common env: $COMMON_ENV_FILE"
-. $COMMON_ENV_FILE
+. "$COMMON_ENV_FILE"
 else
 echo "No common env"
 fi
@@ -47,7 +47,7 @@ done
 
 
 login() {
-${KEYCLOAK_HOME}/bin/kcadm.sh config credentials --server "${KEYCLOAK_SERVER_URL}" --realm master --user "${KEYCLOAK_ADMIN}" --password "${KEYCLOAK_ADMIN_PASSWORD}"
+"${KEYCLOAK_HOME}"/bin/kcadm.sh config credentials --server "${KEYCLOAK_SERVER_URL}" --realm master --user "${KEYCLOAK_ADMIN}" --password "${KEYCLOAK_ADMIN_PASSWORD}"
 }
 
 create_roles_mapper() {
@@ -58,22 +58,22 @@ create_roles_mapper() {
   # https://www.keycloak.org/docs-api/latest/rest-api/index.html#_get_adminrealmsrealmclient_templatesclient_scope_idprotocol_mappersmodelsid
 
   # Find the ID associated with the roles realm scope.
-  scope_id=$(${KEYCLOAK_HOME}/bin/kcadm.sh get client-scopes -r "${KEYCLOAK_REALM}" --fields id,name \
+  scope_id=$("${KEYCLOAK_HOME}"/bin/kcadm.sh get client-scopes -r "${KEYCLOAK_REALM}" --fields id,name \
     | jq -r '.[] | select(.name=="roles") | .id')
 
   # Find the ID for the roles realm scope mapper.  The mapper is a keycloak specific concept for customizing what scope info appears where.
-  mapper_id=$(${KEYCLOAK_HOME}/bin/kcadm.sh get "client-scopes/${scope_id}/protocol-mappers/models" -r "${KEYCLOAK_REALM}" \
+  mapper_id=$("${KEYCLOAK_HOME}"/bin/kcadm.sh get "client-scopes/${scope_id}/protocol-mappers/models" -r "${KEYCLOAK_REALM}" \
     | jq -r '.[] | select(.name=="realm roles") | .id')
 
   # keycloak wants the entire config object sent back, not just piecemeal updates.  Get the whole config and update the needed fields.
-  new_config=$(${KEYCLOAK_HOME}/bin/kcadm.sh get "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
+  new_config=$("${KEYCLOAK_HOME}"/bin/kcadm.sh get "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
     | jq '.config["id.token.claim"]="true" | .config["access.token.claim"]="true" | .config["userinfo.token.claim"]="true"')
 
   # apply the new config.  Use bash-specific process substitution feature for convenience.
-  ${KEYCLOAK_HOME}/bin/kcadm.sh update "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" -f <(echo "${new_config}")
+  "${KEYCLOAK_HOME}"/bin/kcadm.sh update "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" -f <(echo "${new_config}")
 }
 
-if [ ! -z "$2" ]
+if [ -n "$2" ]
 then
   echo "------------------------"
   echo "$2"
@@ -84,6 +84,6 @@ for i in "${!FUNCTIONS[@]}"; do
   echo "------------------------"
   echo "${FUNCTIONS[$i]}"
   echo "------------------------"
-  ${FUNCTIONS[$i]};
+  "${FUNCTIONS[$i]}";
 done
 fi

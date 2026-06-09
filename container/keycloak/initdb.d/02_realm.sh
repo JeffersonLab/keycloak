@@ -13,6 +13,7 @@ KEYCLOAK_SESSION_IDLE_TIMEOUT=28800
 # 86400 Seconds = 24 Hours
 KEYCLOAK_SESSION_MAX_LIFESPAN=86400
 create_realm
+create_roles_mapper
 
 
 
