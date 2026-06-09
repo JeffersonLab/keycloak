@@ -246,7 +246,7 @@ create_roles_mapper() {
   # API described here -
   # https://www.keycloak.org/docs-api/latest/rest-api/index.html#_get_adminrealmsrealmclient_templatesclient_scope_idprotocol_mappersmodelsid
 
-VARIABLES=(KEYCLOAK_HOME
+VARIABLES=(KC_HOME
            KEYCLOAK_REALM)
 
   for i in "${!VARIABLES[@]}"; do
@@ -255,13 +255,13 @@ VARIABLES=(KEYCLOAK_HOME
   done
 
   # Find the ID associated with the roles realm scope.
-  scope_id=$("${KEYCLOAK_HOME}"/bin/kcadm.sh \
+  scope_id=$("${KC_HOME}"/bin/kcadm.sh \
     get client-scopes -r "${KEYCLOAK_REALM}" --fields id,name \
     | jq -r '.[] | select(.name=="roles") | .id')
 
   # Find the ID for the roles realm scope mapper.  The mapper is a keycloak specific concept for customizing what scope
   # info appears where.
-  mapper_id=$("${KEYCLOAK_HOME}"/bin/kcadm.sh \
+  mapper_id=$("${KC_HOME}"/bin/kcadm.sh \
     get "client-scopes/${scope_id}/protocol-mappers/models" \
     -r "${KEYCLOAK_REALM}" \
     | jq -r '.[] | select(.name=="realm roles") | .id')
@@ -271,12 +271,12 @@ VARIABLES=(KEYCLOAK_HOME
   jq_str='.config["id.token.claim"]="true"'
   jq_str+=' | .config["access.token.claim"]="true"'
   jq_str+=' | .config["userinfo.token.claim"]="true"'
-  new_config=$("${KEYCLOAK_HOME}"/bin/kcadm.sh \
+  new_config=$("${KC_HOME}"/bin/kcadm.sh \
     get "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
     | jq "$jq_str")
 
   # apply the new config.  Use bash-specific process substitution feature for convenience.
-  "${KEYCLOAK_HOME}"/bin/kcadm.sh \
+  "${KC_HOME}"/bin/kcadm.sh \
     update "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
     -f <(echo "${new_config}")
 }
