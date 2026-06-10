@@ -7,7 +7,7 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 . ${SCRIPT_DIR}/lib.sh
 
 FUNCTIONS=(login
-           create_roles_mapper)
+           update_realm_roles_scope)
 
 VARIABLES=(KEYCLOAK_ADMIN
            KEYCLOAK_ADMIN_PASSWORD
