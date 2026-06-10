@@ -291,6 +291,31 @@ ${KC_HOME}/bin/kcadm.sh create identity-provider/instances -r ${KC_REALM} -s ali
 -s config.clientSecret=${KC_SECRET}
 }
 
+create_autolink_flow() {
+  VARIABLES=(KC_ALIAS
+             KC_HOME
+             KC_REALM)
+
+  for i in "${!VARIABLES[@]}"; do
+    var=${VARIABLES[$i]}
+    [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
+  done
+
+${KC_HOME}/bin/kcadm.sh create authentication/flows -r ${KC_REALM} -s alias=${KC_ALIAS} \
+-s providerId=basic-flow \
+-s id=${KC_REALM}-autolink-flow \
+-s topLevel=true \
+-s builtIn=false \
+-s description="Automatically link brokered IdP on first login"
+
+EXECUTION_ID=$(${KC_HOME}/bin/kcadm.sh create authentication/flows/${KC_ALIAS}/executions/execution -r ${KC_REALM} -s provider=idp-create-user-if-unique -i)
+${KC_HOME}/bin/kcadm.sh update authentication/flows/${KC_ALIAS}/executions -r ${KC_REALM} -b '{"id":"'${EXECUTION_ID}'","requirement":"ALTERNATIVE"}'
+
+EXECUTION_ID=$(${KC_HOME}/bin/kcadm.sh create authentication/flows/${KC_ALIAS}/executions/execution -r ${KC_REALM} -s provider=idp-auto-link -i)
+${KC_HOME}/bin/kcadm.sh update authentication/flows/${KC_ALIAS}/executions -r ${KC_REALM} -b '{"id":"'${EXECUTION_ID}'","requirement":"ALTERNATIVE"}'
+
+}}
+
 update_realm_roles_scope() {
   # Update the realm-based roles scope so that a user's group IDs are put into the access token as a claim that all
   # clients get.  This allows clients like apache httpd to perform group-based authorization using the claim info in the
