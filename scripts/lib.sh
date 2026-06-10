@@ -332,7 +332,7 @@ ${KC_HOME}/bin/kcadm.sh update authentication/flows/${KC_ALIAS}/executions -r ${
 EXECUTION_ID=$(${KC_HOME}/bin/kcadm.sh create authentication/flows/${KC_ALIAS}/executions/execution -r ${KC_REALM} -s provider=idp-auto-link -i)
 ${KC_HOME}/bin/kcadm.sh update authentication/flows/${KC_ALIAS}/executions -r ${KC_REALM} -b '{"id":"'${EXECUTION_ID}'","requirement":"ALTERNATIVE"}'
 
-}}
+}
 
 update_realm_roles_scope() {
   # Update the realm-based roles scope so that a user's group IDs are put into the access token as a claim that all
