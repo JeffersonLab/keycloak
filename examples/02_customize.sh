@@ -37,3 +37,13 @@ create_user
 assign_role
 KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
 assign_role
+
+KEYCLOAK_USERNAME=jdoe
+KEYCLOAK_FIRSTNAME=John
+KEYCLOAK_LASTNAME=Doe
+KEYCLOAK_EMAIL=jdoe@example.com
+create_user
+KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-user
+assign_role
+KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
+assign_role

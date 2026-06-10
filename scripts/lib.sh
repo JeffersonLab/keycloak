@@ -175,7 +175,7 @@ ${KC_HOME}/bin/kcadm.sh create components \
 -s config.allowKerberosAuthentication=${KEYCLOAK_SPNEGO} \
 -s config.keyTab=${KEYCLOAK_KEYTAB} \
 -s config.kerberosRealm=${KEYCLOAK_KERBEROS_REALM} \
--s 'config.useKerberosForPasswordAuthentication=["false"]'
+-s 'config.useKerberosForPasswordAuthentication=["false"]' # This was true in prod script!
 }
 
 set_first_name_mapper_attribute() {
@@ -195,7 +195,7 @@ ${KC_HOME}/bin/kcadm.sh update components/${MAPPER_ID} \
                               -s 'config."ldap.attribute"'="${KEYCLOAK_FIRSTNAME_ATTR}"
 }
 
-create_role_mapper() {
+create_ldap_role_mapper() {
 VARIABLES=(KC_HOME
            KEYCLOAK_REALM)
 
