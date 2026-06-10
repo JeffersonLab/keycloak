@@ -20,10 +20,10 @@ ${KC_HOME}/bin/kcadm.sh config credentials \
 
 create_realm() {
 VARIABLES=(KC_HOME
-           KEYCLOAK_REALM
-           KEYCLOAK_REALM_DISPLAY_NAME
-           KEYCLOAK_SESSION_IDLE_TIMEOUT
-           KEYCLOAK_SESSION_MAX_LIFESPAN)
+           KC_REALM
+           KC_REALM_DISPLAY_NAME
+           KC_SESSION_IDLE_TIMEOUT
+           KC_SESSION_MAX_LIFESPAN)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -31,22 +31,22 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh create realms \
-                              -s id="${KEYCLOAK_REALM}" \
-                              -s realm="${KEYCLOAK_REALM}" \
+                              -s id="${KC_REALM}" \
+                              -s realm="${KC_REALM}" \
                               -s enabled=true \
-                              -s displayName="${KEYCLOAK_REALM_DISPLAY_NAME}" \
-                              -s ssoSessionIdleTimeout="${KEYCLOAK_SESSION_IDLE_TIMEOUT}" \
-                              -s ssoSessionMaxLifespan="${KEYCLOAK_SESSION_MAX_LIFESPAN}" \
+                              -s displayName="${KC_REALM_DISPLAY_NAME}" \
+                              -s ssoSessionIdleTimeout="${KC_SESSION_IDLE_TIMEOUT}" \
+                              -s ssoSessionMaxLifespan="${KC_SESSION_MAX_LIFESPAN}" \
                               -s loginWithEmailAllowed=false
 }
 
 create_client() {
-VARIABLES=(KEYCLOAK_CLIENT_NAME
+VARIABLES=(KC_CLIENT_NAME
            KC_HOME
-           KEYCLOAK_REALM
-           KEYCLOAK_REDIRECT_URIS
-           KEYCLOAK_SECRET
-           KEYCLOAK_SERVICE_ACCOUNT_ENABLED)
+           KC_REALM
+           KC_REDIRECT_URIS
+           KC_SECRET
+           KC_SERVICE_ACCOUNT_ENABLED)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -54,25 +54,25 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh create clients \
-                              -r "${KEYCLOAK_REALM}" \
-                              -s clientId="${KEYCLOAK_CLIENT_NAME}" \
-                              -s id="${KEYCLOAK_CLIENT_NAME}" \
+                              -r "${KC_REALM}" \
+                              -s clientId="${KC_CLIENT_NAME}" \
+                              -s id="${KC_CLIENT_NAME}" \
                               -s enabled=true \
-                              -s serviceAccountsEnabled=${KEYCLOAK_SERVICE_ACCOUNT_ENABLED} \
-                              -s redirectUris=${KEYCLOAK_REDIRECT_URIS} \
-                              -s secret="${KEYCLOAK_SECRET}"
+                              -s serviceAccountsEnabled=${KC_SERVICE_ACCOUNT_ENABLED} \
+                              -s redirectUris=${KC_REDIRECT_URIS} \
+                              -s secret="${KC_SECRET}"
 
-if [ ${KEYCLOAK_SERVICE_ACCOUNT_ENABLED} = 'true' ] ; then
-${KC_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-users
-${KC_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-authorization
-${KC_HOME}/bin/kcadm.sh add-roles -r "${KEYCLOAK_REALM}" --uusername service-account-${KEYCLOAK_CLIENT_NAME} --cclientid realm-management --rolename view-realm
+if [ ${KC_SERVICE_ACCOUNT_ENABLED} = 'true' ] ; then
+${KC_HOME}/bin/kcadm.sh add-roles -r "${KC_REALM}" --uusername service-account-${KC_CLIENT_NAME} --cclientid realm-management --rolename view-users
+${KC_HOME}/bin/kcadm.sh add-roles -r "${KC_REALM}" --uusername service-account-${KC_CLIENT_NAME} --cclientid realm-management --rolename view-authorization
+${KC_HOME}/bin/kcadm.sh add-roles -r "${KC_REALM}" --uusername service-account-${KC_CLIENT_NAME} --cclientid realm-management --rolename view-realm
 fi
 }
 
 create_role() {
 VARIABLES=(KC_HOME
-           KEYCLOAK_REALM
-           KEYCLOAK_ROLE_NAME)
+           KC_REALM
+           KC_ROLE_NAME)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -80,17 +80,17 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh create roles \
-                              -r "${KEYCLOAK_REALM}" \
-                              -s name="${KEYCLOAK_ROLE_NAME}"
+                              -r "${KC_REALM}" \
+                              -s name="${KC_ROLE_NAME}"
 }
 
 create_user() {
 VARIABLES=(KC_HOME
-           KEYCLOAK_EMAIL
-           KEYCLOAK_FIRSTNAME
-           KEYCLOAK_LASTNAME
-           KEYCLOAK_REALM
-           KEYCLOAK_USERNAME)
+           KC_EMAIL
+           KC_FIRSTNAME
+           KC_LASTNAME
+           KC_REALM
+           KC_USERNAME)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -98,24 +98,24 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh create users \
-                              -r "${KEYCLOAK_REALM}" \
-                              -s username="${KEYCLOAK_USERNAME}" \
-                              -s firstName="${KEYCLOAK_FIRSTNAME}" \
-                              -s lastName="${KEYCLOAK_LASTNAME}" \
-                              -s email="${KEYCLOAK_EMAIL}" \
+                              -r "${KC_REALM}" \
+                              -s username="${KC_USERNAME}" \
+                              -s firstName="${KC_FIRSTNAME}" \
+                              -s lastName="${KC_LASTNAME}" \
+                              -s email="${KC_EMAIL}" \
                               -s enabled=true
 
 ${KC_HOME}/bin/kcadm.sh set-password \
-                              -r "${KEYCLOAK_REALM}" \
-                               --username "${KEYCLOAK_USERNAME}" \
-                               --new-password "${KEYCLOAK_PASSWORD}"
+                              -r "${KC_REALM}" \
+                               --username "${KC_USERNAME}" \
+                               --new-password "${KC_PASSWORD}"
 }
 
 assign_role() {
 VARIABLES=(KC_HOME
-           KEYCLOAK_REALM
-           KEYCLOAK_ROLE_NAME
-           KEYCLOAK_USERNAME)
+           KC_REALM
+           KC_ROLE_NAME
+           KC_USERNAME)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -123,14 +123,29 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh add-roles \
-                              -r "${KEYCLOAK_REALM}" \
-                              --uusername "${KEYCLOAK_USERNAME}" \
-                              --rolename "${KEYCLOAK_ROLE_NAME}"
+                              -r "${KC_REALM}" \
+                              --uusername "${KC_USERNAME}" \
+                              --rolename "${KC_ROLE_NAME}"
 }
 
 create_ldap_storage_provider() {
-VARIABLES=(KC_HOME
-           KEYCLOAK_REALM)
+VARIABLES=(KC_BIND_CREDENTIAL
+           KC_BIND_DN
+           KC_DEBUG
+           KC_HOME
+           KC_IMPORT
+           KC_KERBEROS_REALM
+           KC_KEYTAB
+           KC_LDAP_CONNECTION_URL
+           KC_RDN
+           KC_REALM
+           KC_SERVER_PRINCIPLE
+           KC_SPNEGO
+           KC_USERNAME_ATTR
+           KC_USER_OBJ_CLASSES
+           KC_USERS_DN
+           KC_UUID
+           KC_VENDOR)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -138,22 +153,22 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh create components \
--r "${KEYCLOAK_REALM}" \
--s parentId="${KEYCLOAK_REALM}" \
--s id=${KEYCLOAK_REALM}-ldap-provider \
--s name=${KEYCLOAK_REALM}-ldap-provider \
+-r "${KC_REALM}" \
+-s parentId="${KC_REALM}" \
+-s id=${KC_REALM}-ldap-provider \
+-s name=${KC_REALM}-ldap-provider \
 -s providerId=ldap \
 -s providerType=org.keycloak.storage.UserStorageProvider \
--s config.debug=${KEYCLOAK_DEBUG} \
+-s config.debug=${KC_DEBUG} \
 -s config.authType='["simple"]' \
--s config.vendor=${KEYCLOAK_VENDOR} \
+-s config.vendor=${KC_VENDOR} \
 -s config.priority='["0"]' \
--s config.connectionUrl=${KEYCLOAK_LDAP_CONNECTION_URL} \
+-s config.connectionUrl=${KC_LDAP_CONNECTION_URL} \
 -s config.editMode='["READ_ONLY"]' \
--s config.usersDn="${KEYCLOAK_USERS_DN}" \
--s config.serverPrincipal="${KEYCLOAK_SERVER_PRINCIPLE}" \
--s config.bindDn="${KEYCLOAK_BIND_DN}" \
--s config.bindCredential="${KEYCLOAK_BIND_CREDENTIAL}" \
+-s config.usersDn="${KC_USERS_DN}" \
+-s config.serverPrincipal="${KC_SERVER_PRINCIPLE}" \
+-s config.bindDn="${KC_BIND_DN}" \
+-s config.bindCredential="${KC_BIND_CREDENTIAL}" \
 -s 'config.fullSyncPeriod=["86400"]' \
 -s 'config.changedSyncPeriod=["-1"]' \
 -s 'config.cachePolicy=["NO_CACHE"]' \
@@ -161,43 +176,44 @@ ${KC_HOME}/bin/kcadm.sh create components \
 -s config.evictionHour=[] \
 -s config.evictionMinute=[] \
 -s config.maxLifespan=[] \
--s config.importEnabled=${KEYCLOAK_IMPORT} \
+-s config.importEnabled=${KC_IMPORT} \
 -s 'config.batchSizeForSync=["1000"]' \
 -s config.syncRegistrations='["false"]' \
--s config.usernameLDAPAttribute=${KEYCLOAK_USERNAME_ATTR} \
--s config.rdnLDAPAttribute=${KEYCLOAK_RDN} \
--s config.uuidLDAPAttribute=${KEYCLOAK_UUID} \
--s config.userObjectClasses="${KEYCLOAK_USER_OBJ_CLASSES}" \
+-s config.usernameLDAPAttribute=${KC_USERNAME_ATTR} \
+-s config.rdnLDAPAttribute=${KC_RDN} \
+-s config.uuidLDAPAttribute=${KC_UUID} \
+-s config.userObjectClasses="${KC_USER_OBJ_CLASSES}" \
 -s 'config.searchScope=["1"]' \
 -s 'config.useTruststoreSpi=["ldapsOnly"]' \
 -s 'config.connectionPooling=["true"]' \
 -s 'config.pagination=["true"]' \
--s config.allowKerberosAuthentication=${KEYCLOAK_SPNEGO} \
--s config.keyTab=${KEYCLOAK_KEYTAB} \
--s config.kerberosRealm=${KEYCLOAK_KERBEROS_REALM} \
+-s config.allowKerberosAuthentication=${KC_SPNEGO} \
+-s config.keyTab=${KC_KEYTAB} \
+-s config.kerberosRealm=${KC_KERBEROS_REALM} \
 -s 'config.useKerberosForPasswordAuthentication=["false"]' # This was true in prod script!
 }
 
 set_first_name_mapper_attribute() {
 VARIABLES=(KC_HOME
-           KEYCLOAK_REALM
-           KEYCLOAK_FIRSTNAME_ATTR)
+           KC_REALM
+           KC_FIRSTNAME_ATTR)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
-MAPPER_ID=`${KC_HOME}/bin/kcadm.sh get components -r ${KEYCLOAK_REALM} -q name='first name' --fields id | jq -r .[0].id`
+MAPPER_ID=`${KC_HOME}/bin/kcadm.sh get components -r ${KC_REALM} -q name='first name' --fields id | jq -r .[0].id`
 
 ${KC_HOME}/bin/kcadm.sh update components/${MAPPER_ID} \
-                              -r "${KEYCLOAK_REALM}" \
-                              -s 'config."ldap.attribute"'="${KEYCLOAK_FIRSTNAME_ATTR}"
+                              -r "${KC_REALM}" \
+                              -s 'config."ldap.attribute"'="${KC_FIRSTNAME_ATTR}"
 }
 
 create_ldap_role_mapper() {
 VARIABLES=(KC_HOME
-           KEYCLOAK_REALM)
+           KC_REALM
+           KC_ROLES_DN)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -205,13 +221,13 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh create components \
--r ${KEYCLOAK_REALM} \
--s parentId=${KEYCLOAK_REALM}-ldap-provider \
--s id=${KEYCLOAK_REALM}-ldap-role-mapper \
--s name=${KEYCLOAK_REALM}-ldap-role-mapper \
+-r ${KC_REALM} \
+-s parentId=${KC_REALM}-ldap-provider \
+-s id=${KC_REALM}-ldap-role-mapper \
+-s name=${KC_REALM}-ldap-role-mapper \
 -s providerId=role-ldap-mapper \
 -s providerType=org.keycloak.storage.ldap.mappers.LDAPStorageMapper \
--s 'config."roles.dn"'=${KEYCLOAK_ROLES_DN} \
+-s 'config."roles.dn"'=${KC_ROLES_DN} \
 -s 'config."role.name.ldap.attribute"=["cn"]' \
 -s 'config."role.object.classes"=["groupOfNames"]' \
 -s 'config."membership.ldap.attribute"=["member"]' \
@@ -225,8 +241,8 @@ ${KC_HOME}/bin/kcadm.sh create components \
 
 run_user_storage_sync() {
 VARIABLES=(KC_HOME
-           KEYCLOAK_PROVIDER
-           KEYCLOAK_REALM)
+           KC_PROVIDER
+           KC_REALM)
 
 for i in "${!VARIABLES[@]}"; do
   var=${VARIABLES[$i]}
@@ -234,8 +250,45 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 ${KC_HOME}/bin/kcadm.sh create \
-                              -r ${KEYCLOAK_REALM} \
-                              user-storage/${KEYCLOAK_PROVIDER}/sync?action=triggerFullSync
+                              -r ${KC_REALM} \
+                              user-storage/${KC_PROVIDER}/sync?action=triggerFullSync
+}
+
+create_idp() {
+VARIABLES=(KC_ALIAS
+           KC_AUTH_URL
+           KC_CLIENT_NAME
+           KC_DISPLAY_NAME
+           KC_FIRST_LOGIN_FLOW
+           KC_HOME
+           KC_ISSUER_URL
+           KC_JWKS_URL
+           KC_LOGOUT_URL
+           KC_REALM
+           KC_SECRET
+           KC_TOKEN_URL)
+
+for i in "${!VARIABLES[@]}"; do
+  var=${VARIABLES[$i]}
+  [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
+done
+
+${KC_HOME}/bin/kcadm.sh create identity-provider/instances -r ${KC_REALM} -s alias=${KC_ALIAS} \
+-s providerId=keycloak-oidc \
+-s enabled=true \
+-s displayName=${KC_DISPLAY_NAME} \
+-s firstBrokerLoginFlowAlias=${KC_FIRST_LOGIN_FLOW} \
+-s config.clientId=${KC_CLIENT_NAME} \
+-s config.disableUserInfo=true \
+-s config.validateSignature=true \
+-s config.useJwksUrl=true \
+-s config.authorizationUrl=${KC_AUTH_URL} \
+-s config.tokenUrl=${KC_TOKEN_URL} \
+-s config.logoutUrl=${KC_LOGOUT_URL} \
+-s config.issuer=${KC_ISSUER_URL} \
+-s config.jwksUrl=${KC_JWKS_URL} \
+-s config.backchannelSupported=true \
+-s config.clientSecret=${KC_SECRET}
 }
 
 update_realm_roles_scope() {
@@ -247,7 +300,7 @@ update_realm_roles_scope() {
   # https://www.keycloak.org/docs-api/latest/rest-api/index.html#_get_adminrealmsrealmclient_templatesclient_scope_idprotocol_mappersmodelsid
 
 VARIABLES=(KC_HOME
-           KEYCLOAK_REALM)
+           KC_REALM)
 
   for i in "${!VARIABLES[@]}"; do
     var=${VARIABLES[$i]}
@@ -256,14 +309,14 @@ VARIABLES=(KC_HOME
 
   # Find the ID associated with the roles realm scope.
   scope_id=$("${KC_HOME}"/bin/kcadm.sh \
-    get client-scopes -r "${KEYCLOAK_REALM}" --fields id,name \
+    get client-scopes -r "${KC_REALM}" --fields id,name \
     | jq -r '.[] | select(.name=="roles") | .id')
 
   # Find the ID for the roles realm scope mapper.  The mapper is a keycloak specific concept for customizing what scope
   # info appears where.
   mapper_id=$("${KC_HOME}"/bin/kcadm.sh \
     get "client-scopes/${scope_id}/protocol-mappers/models" \
-    -r "${KEYCLOAK_REALM}" \
+    -r "${KC_REALM}" \
     | jq -r '.[] | select(.name=="realm roles") | .id')
 
   # keycloak wants the entire config object sent back, not just piecemeal updates.  Must get the whole config and update
@@ -272,11 +325,11 @@ VARIABLES=(KC_HOME
   jq_str+=' | .config["access.token.claim"]="true"'
   jq_str+=' | .config["userinfo.token.claim"]="true"'
   new_config=$("${KC_HOME}"/bin/kcadm.sh \
-    get "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
+    get "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KC_REALM}" \
     | jq "$jq_str")
 
   # apply the new config.  Use bash-specific process substitution feature for convenience.
   "${KC_HOME}"/bin/kcadm.sh \
-    update "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KEYCLOAK_REALM}" \
+    update "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KC_REALM}" \
     -f <(echo "${new_config}")
 }

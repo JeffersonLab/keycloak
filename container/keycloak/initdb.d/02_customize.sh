@@ -10,26 +10,26 @@ update_realm_roles_scope
 echo "------------------------------"
 echo "| LDAP User Storage Provider |"
 echo "------------------------------"
-KEYCLOAK_DEBUG='["true"]'
-KEYCLOAK_LDAP_CONNECTION_URL='["ldap://dirsrv:3389"]'
-KEYCLOAK_USERS_DN='["cn=users,cn=accounts,dc=example,dc=com"]'
-KEYCLOAK_BIND_DN='["cn=Directory Manager"]'
-KEYCLOAK_BIND_CREDENTIAL='["password"]'
-KEYCLOAK_USER_OBJ_CLASSES='["person","organizationalPerson","inetorgperson"]'
-KEYCLOAK_KERBEROS_AUTHN='["false"]'
-KEYCLOAK_KERBEROS_FOR_PASS='["false"]'
-KEYCLOAK_KEYTAB='["/etc/test-realm.keytab"]'
-KEYCLOAK_VENDOR='["rhds"]'
-KEYCLOAK_IMPORT='["false"]'
-KEYCLOAK_SPNEGO='["false"]'
-KEYCLOAK_SERVER_PRINCIPLE='["HTTP/test.example.com@EXAMPLE.COM"]'
-KEYCLOAK_USERNAME_ATTR='["uid"]'
-KEYCLOAK_RDN='["uid"]'
-KEYCLOAK_UUID='["uid"]'
-KEYCLOAK_KERBEROS_REALM='["EXAMPLE.COM"]'
-KEYCLOAK_PROVIDER="${KEYCLOAK_REALM}-ldap-provider"
-KEYCLOAK_FIRSTNAME_ATTR='["givenName"]'
-KEYCLOAK_ROLES_DN='["cn=groups,cn=accounts,dc=example,dc=com"]'
+KC_DEBUG='["true"]'
+KC_LDAP_CONNECTION_URL='["ldap://dirsrv:3389"]'
+KC_USERS_DN='["cn=users,cn=accounts,dc=example,dc=com"]'
+KC_BIND_DN='["cn=Directory Manager"]'
+KC_BIND_CREDENTIAL='["password"]'
+KC_USER_OBJ_CLASSES='["person","organizationalPerson","inetorgperson"]'
+KC_KERBEROS_AUTHN='["false"]'
+KC_KERBEROS_FOR_PASS='["false"]'
+KC_KEYTAB='["/etc/test-realm.keytab"]'
+KC_VENDOR='["rhds"]'
+KC_IMPORT='["false"]'
+KC_SPNEGO='["false"]'
+KC_SERVER_PRINCIPLE='["HTTP/test.example.com@EXAMPLE.COM"]'
+KC_USERNAME_ATTR='["uid"]'
+KC_RDN='["uid"]'
+KC_UUID='["uid"]'
+KC_KERBEROS_REALM='["EXAMPLE.COM"]'
+KC_PROVIDER="${KEYCLOAK_REALM}-ldap-provider"
+KC_FIRSTNAME_ATTR='["givenName"]'
+KC_ROLES_DN='["cn=groups,cn=accounts,dc=example,dc=com"]'
 create_ldap_storage_provider
 
 # See: https://github.com/keycloak/keycloak/issues/15623
