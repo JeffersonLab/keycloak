@@ -5,45 +5,45 @@
 echo "----------------"
 echo "| Create Roles |"
 echo "----------------"
-KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-user
+KC_ROLE_NAME=${KC_RESOURCE}-user
 create_role
-KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
+KC_ROLE_NAME=${KC_RESOURCE}-admin
 create_role
 
 echo "----------------"
 echo "| Create Users |"
 echo "----------------"
-KEYCLOAK_USERNAME=jadams
-KEYCLOAK_FIRSTNAME=Jane
-KEYCLOAK_LASTNAME=Adams
-KEYCLOAK_EMAIL=jadams@example.com
-KEYCLOAK_PASSWORD=password
-KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-user
+KC_USERNAME=jadams
+KC_FIRSTNAME=Jane
+KC_LASTNAME=Adams
+KC_EMAIL=jadams@example.com
+KC_PASSWORD=password
+KC_ROLE_NAME=${KC_RESOURCE}-user
 create_user
 assign_role
 
-KEYCLOAK_USERNAME=jsmith
-KEYCLOAK_FIRSTNAME=John
-KEYCLOAK_LASTNAME=Smith
-KEYCLOAK_EMAIL=jsmith@example.com
+KC_USERNAME=jsmith
+KC_FIRSTNAME=John
+KC_LASTNAME=Smith
+KC_EMAIL=jsmith@example.com
 create_user
 assign_role
 
-KEYCLOAK_USERNAME=tbrown
-KEYCLOAK_FIRSTNAME=Tom
-KEYCLOAK_LASTNAME=Brown
-KEYCLOAK_EMAIL=tbrown@example.com
+KC_USERNAME=tbrown
+KC_FIRSTNAME=Tom
+KC_LASTNAME=Brown
+KC_EMAIL=tbrown@example.com
 create_user
 assign_role
-KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
+KC_ROLE_NAME=${KC_RESOURCE}-admin
 assign_role
 
-KEYCLOAK_USERNAME=jdoe
-KEYCLOAK_FIRSTNAME=John
-KEYCLOAK_LASTNAME=Doe
-KEYCLOAK_EMAIL=jdoe@example.com
+KC_USERNAME=jdoe
+KC_FIRSTNAME=John
+KC_LASTNAME=Doe
+KC_EMAIL=jdoe@example.com
 create_user
-KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-user
+KC_ROLE_NAME=${KC_RESOURCE}-user
 assign_role
-KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
+KC_ROLE_NAME=${KC_RESOURCE}-admin
 assign_role
