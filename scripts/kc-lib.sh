@@ -85,6 +85,46 @@ ${KC_HOME}/bin/kcadm.sh add-roles -r "${KC_REALM}" --uusername service-account-$
 ${KC_HOME}/bin/kcadm.sh add-roles -r "${KC_REALM}" --uusername service-account-${KC_CLIENT_NAME} --cclientid realm-management --rolename view-authorization
 ${KC_HOME}/bin/kcadm.sh add-roles -r "${KC_REALM}" --uusername service-account-${KC_CLIENT_NAME} --cclientid realm-management --rolename view-realm
 fi
+
+# Client can provide a set of roles.  Since they exist with only the client
+# no need to check for their existence.
+if [ -n "${KC_PROVIDES_CLIENT_ROLES}" ] ; then
+  for role in ${KC_PROVIDES_CLIENT_ROLES} ; do
+    ${KC_HOME}/bin/kcadm.sh create clients/${KC_CLIENT_NAME}/roles \
+	    -r ${KC_REALM} \
+	    -s name=${role}
+  done
+fi
+
+# This client's service account can be assigned to roles provided by another
+# client.  Handle that here.
+if [ -n "${KC_ASSIGNED_CLIENT_ROLES}" ] ; then
+  for role in ${KC_ASSIGNED_CLIENT_ROLES} ; do
+    # Expected in {client_id}/{role_name} format, e.g. wfbrowser/wfb_data
+    clientid=`echo $role | awk -F'/' '{print $1}'`
+    rolename=`echo $role | awk -F'/' '{print $2}'`
+    ${KC_HOME}/bin/kcadm.sh add-roles -r ${KC_REALM} \
+        --uusername service-account-${KC_CLIENT_NAME} \
+	--cclientid ${clientid} \
+	--rolename ${rolename}
+  done
+fi
+
+# This creates (if needed) and assigns roles to the service account for the given client.
+if [ -n "${KC_ASSIGNED_REALM_ROLES}" ] ; then
+  for rolename in ${KC_ASSIGNED_REALM_ROLES} ; do
+    ${KC_HOME}/bin/kcadm.sh get-roles -r ${KEYCLOAK_REALM} --rolename ${rolename}
+    exit_code=$?
+    if [ "${exit_code}" -ne 0 ] ; then
+      ${KC_HOME}/bin/kcadm.sh create roles -r ${KC_REALM} \
+          -s name=${rolename} \
+	  -s description=""
+    fi
+    ${KC_HOME}/bin/kcadm.sh add-roles -r ${KC_REALM} \
+        --rolename ${rolename} \
+        --uusername service-account-${KC_CLIENT_NAME}
+  done
+fi
 }
 
 create_role() {
