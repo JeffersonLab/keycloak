@@ -6,34 +6,17 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # Source library of functions, assuming file is in same directory
 . ${SCRIPT_DIR}/lib.sh
 
-# Set default env
-export KEYCLOAK_FIRSTNAME_ATTR='["givenName"]'
-
 FUNCTIONS=(login
-           create_ldap_storage_provider
-           set_first_name_mapper_attribute
-           create_ldap_role_mapper
-           run_user_storage_sync)
+           create_roles_mapper)
 
 VARIABLES=(KEYCLOAK_ADMIN
            KEYCLOAK_ADMIN_PASSWORD
            KEYCLOAK_HOME
            KEYCLOAK_REALM
-           KEYCLOAK_SERVER_URL
-           KEYCLOAK_SERVER_PRINCIPLE
-           KEYCLOAK_BIND_CREDENTIAL
-           KEYCLOAK_USERS_DN
-           KEYCLOAK_DEBUG
-           KEYCLOAK_LDAP_CONNECTION_URL
-           KEYCLOAK_KEYTAB
-           KEYCLOAK_KERBEROS_REALM
-           KEYCLOAK_VENDOR
-           KEYCLOAK_IMPORT
-           KEYCLOAK_OBJ_CLASSES
-           KEYCLOAK_SPNEGO
-           KEYCLOAK_USERNAME_ATTR
-           KEYCLOAK_RDN
-           KEYCLOAK_UUID)
+           KEYCLOAK_REALM_DISPLAY_NAME
+           KEYCLOAK_SESSION_IDLE_TIMEOUT
+           KEYCLOAK_SESSION_MAX_LIFESPAN
+           KEYCLOAK_SERVER_URL)
 
 if [[ $# -eq 0 ]] ; then
     echo "Usage: $0 [var file] <optional function>"
@@ -48,16 +31,16 @@ if [[ $# -eq 0 ]] ; then
     exit 0
 fi
 
-if [ ! -z "$1" ] && [ -f "$1" ]
+if [ -n "$1" ] && [ -f "$1" ]
 then
 echo "Loading environment $1"
-. $1
+. "$1"
 fi
 
-if [ ! -z "$COMMON_ENV_FILE" ] && [ -f "$COMMON_ENV_FILE" ]
+if [ -n "$COMMON_ENV_FILE" ] && [ -f "$COMMON_ENV_FILE" ]
 then
 echo "Loading common env: $COMMON_ENV_FILE"
-. $COMMON_ENV_FILE
+. "$COMMON_ENV_FILE"
 else
 echo "No common env"
 fi
@@ -69,7 +52,7 @@ for i in "${!VARIABLES[@]}"; do
 done
 
 # Invoke library functions
-if [ ! -z "$2" ]
+if [ -n "$2" ]
 then
   echo "------------------------"
   echo "$2"
@@ -80,6 +63,6 @@ for i in "${!FUNCTIONS[@]}"; do
   echo "------------------------"
   echo "${FUNCTIONS[$i]}"
   echo "------------------------"
-  ${FUNCTIONS[$i]};
+  "${FUNCTIONS[$i]}";
 done
 fi
