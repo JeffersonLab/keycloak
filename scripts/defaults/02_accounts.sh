@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# This is an example overriding 02_accounts.sh.
-
 # Located in root of container
 . /kc-lib.sh
 
