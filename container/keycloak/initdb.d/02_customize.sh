@@ -28,7 +28,7 @@ KC_USERNAME_ATTR='["uid"]'
 KC_RDN='["uid"]'
 KC_UUID='["uid"]'
 KC_KERBEROS_REALM='["EXAMPLE.COM"]'
-KC_PROVIDER="${KEYCLOAK_REALM}-ldap-provider"
+KC_PROVIDER="${KC_REALM}-ldap-provider"
 KC_ROLES_DN='["cn=groups,cn=accounts,dc=example,dc=com"]'
 create_ldap_storage_provider
 

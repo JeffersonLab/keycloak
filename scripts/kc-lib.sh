@@ -113,7 +113,7 @@ fi
 # This creates (if needed) and assigns roles to the service account for the given client.
 if [ -n "${KC_ASSIGNED_REALM_ROLES}" ] ; then
   for rolename in ${KC_ASSIGNED_REALM_ROLES} ; do
-    ${KC_HOME}/bin/kcadm.sh get-roles -r ${KEYCLOAK_REALM} --rolename ${rolename}
+    ${KC_HOME}/bin/kcadm.sh get-roles -r ${KC_REALM} --rolename ${rolename}
     exit_code=$?
     if [ "${exit_code}" -ne 0 ] ; then
       ${KC_HOME}/bin/kcadm.sh create roles -r ${KC_REALM} \
