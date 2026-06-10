@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. /lib.sh
+# Located in root of container
+. /kc-lib.sh
 
 echo "----------------"
 echo "| Create Roles |"
