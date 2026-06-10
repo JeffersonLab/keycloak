@@ -4,7 +4,7 @@
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 # Source library of functions, assuming file is in same directory
-. ${SCRIPT_DIR}/lib.sh
+. ${SCRIPT_DIR}/kc-lib.sh
 
 # Set default env
 export KC_FIRSTNAME_ATTR='["givenName"]'

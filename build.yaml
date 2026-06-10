@@ -17,4 +17,4 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./scripts/lib.sh:/lib.sh
+      - ./scripts/kc-lib.sh:/kc-lib.sh
