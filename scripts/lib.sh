@@ -238,7 +238,7 @@ ${KC_HOME}/bin/kcadm.sh create \
                               user-storage/${KEYCLOAK_PROVIDER}/sync?action=triggerFullSync
 }
 
-create_roles_mapper() {
+update_realm_roles_scope() {
   # Update the realm-based roles scope so that a user's group IDs are put into the access token as a claim that all
   # clients get.  This allows clients like apache httpd to perform group-based authorization using the claim info in the
   # access token.  This change affects all clients.  A similar approach can be used on a per-client basis if needed
