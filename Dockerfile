@@ -37,6 +37,7 @@ COPY --from=builder /mnt/rootfs /
 
 RUN mkdir /container-entrypoint-initdb.d \
     && cp /defaults/* /container-entrypoint-initdb.d \
+    && chmod +x /container-entrypoint-initdb.d/*.sh \
     && chown -R keycloak:keycloak ${KC_HOME}
 
 USER keycloak
