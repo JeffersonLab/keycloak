@@ -190,7 +190,7 @@ ${KC_HOME}/bin/kcadm.sh create components \
 -s config.allowKerberosAuthentication=${KC_SPNEGO} \
 -s config.keyTab=${KC_KEYTAB} \
 -s config.kerberosRealm=${KC_KERBEROS_REALM} \
--s 'config.useKerberosForPasswordAuthentication=["false"]' # This was true in prod script!
+-s config.useKerberosForPasswordAuthentication=${KC_KERBEROS_FOR_PASS}
 }
 
 set_first_name_mapper_attribute() {

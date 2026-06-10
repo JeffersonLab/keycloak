@@ -7,7 +7,8 @@ SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 . ${SCRIPT_DIR}/lib.sh
 
 # Set default env
-export KEYCLOAK_FIRSTNAME_ATTR='["givenName"]'
+export KC_FIRSTNAME_ATTR='["givenName"]'
+export KC_KERBEROS_FOR_PASS='["true"]'
 
 FUNCTIONS=(login
            create_ldap_storage_provider

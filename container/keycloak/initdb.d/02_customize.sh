@@ -28,11 +28,11 @@ KC_RDN='["uid"]'
 KC_UUID='["uid"]'
 KC_KERBEROS_REALM='["EXAMPLE.COM"]'
 KC_PROVIDER="${KEYCLOAK_REALM}-ldap-provider"
-KC_FIRSTNAME_ATTR='["givenName"]'
 KC_ROLES_DN='["cn=groups,cn=accounts,dc=example,dc=com"]'
 create_ldap_storage_provider
 
 # See: https://github.com/keycloak/keycloak/issues/15623
+KC_FIRSTNAME_ATTR='["givenName"]'
 set_first_name_mapper_attribute
 
 run_user_storage_sync
