@@ -1,6 +1,6 @@
 #!/bin/bash
 
-login() {
+bootstrap_login() {
 VARIABLES=(KC_BOOTSTRAP_ADMIN_USERNAME
            KC_BOOTSTRAP_ADMIN_PASSWORD
            KC_HOME
@@ -16,6 +16,24 @@ ${KC_HOME}/bin/kcadm.sh config credentials \
                              --realm master \
                              --user "${KC_BOOTSTRAP_ADMIN_USERNAME}" \
                              --password "${KC_BOOTSTRAP_ADMIN_PASSWORD}"
+}
+
+login() {
+VARIABLES=(KC_ADMIN_USERNAME
+           KC_ADMIN_PASSWORD
+           KC_HOME
+           KC_BACKEND_URL)
+
+for i in "${!VARIABLES[@]}"; do
+  var=${VARIABLES[$i]}
+  [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
+done
+
+${KC_HOME}/bin/kcadm.sh config credentials \
+                             --server "${KC_BACKEND_URL}" \
+                             --realm master \
+                             --user "${KC_ADMIN_USERNAME}" \
+                             --password "${KC_ADMIN_PASSWORD}"
 }
 
 create_realm() {

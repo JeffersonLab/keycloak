@@ -5,7 +5,7 @@
 echo "---------"
 echo "| Login |"
 echo "---------"
-login
+bootstrap_login
 
 echo "----------------"
 echo "| Create Realm |"
