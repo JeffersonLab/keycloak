@@ -31,7 +31,7 @@ http://localhost:8081/auth
 *Note*: Login with username `admin` and password `admin` 
 
 ## Configure
-Mount a volume at `/container-entrypoint-initdb.d` containing bash scripts to run, ordered by name ascending.  See [example](https://github.com/JeffersonLab/keycloak/tree/main/container/keycloak/initdb.d).
+Mount a volume at `/container-entrypoint-initdb.d` containing bash scripts to run, ordered by name ascending.  See [example](https://github.com/JeffersonLab/keycloak/tree/main/container/keycloak/initdb.d).  Mount a subdirectory (e.g. `99-conf.d`) or individual files in this location to keep default config as overriding the `/container-entrypoint-initdb.d/` will overwrite the default configuration.
 
 Environment variables:
 | Name | Description |
@@ -41,6 +41,15 @@ Environment variables:
 | KC_HTTP_RELATIVE_PATH | Relative path, probably must match KC_FRONTEND_URL and KC_BACKEND_URL |
 | KC_BOOTSTRAP_ADMIN_USERNAME | Admin username |
 | KC_BOOTSTRAP_ADMIN_PASSWORD | Admin password |
+| KC_CLIENT_NAME | Client ID, e.g. 'my-app'.   Used in creating client roles and service accounts | 
+| KC_RESOURCE | Controls default role name prefix, e.g., ${KC_RESOURCE}-user.  Typically same as KC_CLIENT_NAME |
+| KC_REDIRECT_URIS | Allowed redirect URIs for the client |
+
+**Notes on Default Configuration:**
+- Additional environment variables are set in [00_config.env](https://github.com/JeffersonLab/keycloak/blob/main/scripts/defaults/00_config.env).  These can only be overridden by replacing this file or providing an additional env file to be sourced after.
+- Each client will use the same client_secret: yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB
+- Three uses are created all with the password 'password': jadams, jdoe, jsmith, and tbrown
+- All users have ${KC_RESOURCE}-user role.  jdoe and tbrown have ${KC_RESOURCE}-admin role
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
