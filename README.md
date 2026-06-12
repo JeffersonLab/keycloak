@@ -47,8 +47,8 @@ Environment variables:
 
 **Notes on Default Configuration:**
 - Additional environment variables are set in [00_config.env](https://github.com/JeffersonLab/keycloak/blob/main/scripts/defaults/00_config.env).  These can only be overridden by replacing this file or providing an additional env file to be sourced after.
-- Each client will use the same client_secret: yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB
-- Three uses are created all with the password 'password': jadams, jdoe, jsmith, and tbrown
+- Each client will use the same client_secret: `yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB`
+- Four users are created all with the password `password`: jadams, jdoe, jsmith, and tbrown
 - All users have ${KC_RESOURCE}-user role.  jdoe and tbrown have ${KC_RESOURCE}-admin role
 
 ## Release
