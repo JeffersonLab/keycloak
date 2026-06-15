@@ -423,9 +423,9 @@ VARIABLES=(KC_HOME
 }
 
 update_client_roles_mapper() {
-  # Update the client-based roles scope so that a user's group IDs are put into the ID token, access token, and userinfo
-  # endpoint as a claim that only this one client gets.  This allows clients like apache httpd to perform group-based
-  # authorization using the claim info in the ID token.  This change affects a single client.
+  # Update the client-based roles scope so that a user's roles are put into the ID token and userinfo endpoint as
+  # a claim that only this one client gets.  This allows clients like apache httpd to perform group-based authorization
+  # using the claim info in the ID token.  This change affects a single client.
   #
   # Note: The UI (client -> client scopes -> dedicated scope -> mappers) references a pre-defined mapper, but I don't
   # see how to access that through the REST/kcadmin API.  Instead, make a copy of the realm-based scope, modify as
