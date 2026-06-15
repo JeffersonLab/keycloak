@@ -125,6 +125,11 @@ if [ -n "${KC_ASSIGNED_REALM_ROLES}" ] ; then
         --uusername service-account-${KC_CLIENT_NAME}
   done
 fi
+
+# This updates the realm_roles mapper on just this client.
+if  [ -n "${KC_UPDATE_CLIENT_ROLES_MAPPER}" ] && [ "${KC_UPDATE_CLIENT_ROLES_MAPPER}" == "true" ]; then
+  update_client_roles_mapper
+fi
 }
 
 create_role() {
@@ -415,4 +420,41 @@ VARIABLES=(KC_HOME
   "${KC_HOME}"/bin/kcadm.sh \
     update "client-scopes/${scope_id}/protocol-mappers/models/${mapper_id}" -r "${KC_REALM}" \
     -f <(echo "${new_config}")
+}
+
+update_client_roles_mapper() {
+  # Update the client-based roles scope so that a user's group IDs are put into the ID token, access token, and userinfo
+  # endpoint as a claim that only this one client gets.  This allows clients like apache httpd to perform group-based
+  # authorization using the claim info in the ID token.  This change affects a single client.
+  #
+  # Note: The UI (client -> client scopes -> dedicated scope -> mappers) references a pre-defined mapper, but I don't
+  # see how to access that through the REST/kcadmin API.  Instead, make a copy of the realm-based scope, modify as
+  # needed, and create a new mapper on the client's dedicated scope using that modified local copy.
+
+VARIABLES=(KC_HOME
+           KC_REALM
+           KC_CLIENT_NAME)
+
+for i in "${!VARIABLES[@]}"; do
+  var=${VARIABLES[$i]}
+  [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
+done
+
+echo "Updating dedicated client scope roles mapper for '${KC_CLIENT_NAME}'"
+
+# Grab the predefined realm-roles mapper from the built-in roles scope
+scope_id=$("${KC_HOME}"/bin/kcadm.sh get client-scopes -r "${KC_REALM}" --fields id,name \
+  | jq -r '.[] | select(.name=="roles") | .id')
+
+# Make changes to our local copy of the realm-roles client scope mapper
+mapper=$("${KC_HOME}"/bin/kcadm.sh get "client-scopes/${scope_id}/protocol-mappers/models" -r "${KC_REALM}" \
+  | jq '.[] | select(.name=="realm roles")
+        | del(.id)
+        | .config["id.token.claim"]="true"
+        | .config["userinfo.token.claim"]="true"')
+
+# Create the mapper on the client's dedicated scope.
+"${KC_HOME}"/bin/kcadm.sh create "clients/${KC_CLIENT_NAME}/protocol-mappers/models" -r "${KC_REALM}" \
+  -f <(echo "${mapper}")
+
 }

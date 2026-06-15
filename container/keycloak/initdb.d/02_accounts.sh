@@ -5,11 +5,6 @@
 # Located in root of container
 . /kc-lib.sh
 
-echo "----------------------------"
-echo "| Update Realm Roles Scope |"
-echo "----------------------------"
-update_realm_roles_scope
-
 echo "------------------------------"
 echo "| LDAP User Storage Provider |"
 echo "------------------------------"
