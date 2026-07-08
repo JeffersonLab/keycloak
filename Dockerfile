@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG BUILD_IMAGE=registry.access.redhat.com/ubi9
-ARG RUN_IMAGE=quay.io/keycloak/keycloak:26.6.2
+ARG RUN_IMAGE=quay.io/keycloak/keycloak:26.6.4
 
 ARG ORACLE_DRIVER_URL=https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc17/23.9.0.25.07/ojdbc17-23.9.0.25.07.jar
 ARG ORACLE_NLS_URL=https://repo1.maven.org/maven2/com/oracle/database/nls/orai18n/23.9.0.25.07/orai18n-23.9.0.25.07.jar
