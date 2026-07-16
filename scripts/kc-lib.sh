@@ -100,7 +100,7 @@ fi
 # client.  Handle that here.
 if [ -n "${KC_ASSIGNED_CLIENT_ROLES}" ] ; then
   for role in ${KC_ASSIGNED_CLIENT_ROLES} ; do
-    # Expected in {client_id}/{role_name} format, e.g. wfbrowser/wfb_data
+    # Expected in {client_id}/{role_name} format
     clientid=`echo $role | awk -F'/' '{print $1}'`
     rolename=`echo $role | awk -F'/' '{print $2}'`
     ${KC_HOME}/bin/kcadm.sh add-roles -r ${KC_REALM} \
