@@ -45,6 +45,9 @@ Environment variables:
 | KC_RESOURCE | Controls default role name prefix, e.g., ${KC_RESOURCE}-user.  Typically same as KC_CLIENT_NAME |
 | KC_REDIRECT_URIS | Allowed redirect URIs for the client |
 | KC_UPDATE_CLIENT_ROLES_MAPPER | If set to true, adds 'roles' claims to ID token and user info endpoint (optional) |
+| KC_ASSIGNED_REALM_ROLES | Space separated listed of realm roles assigned to client's service account.  Created if missing. |
+| KC_PROVIDES_CLIENT_ROLES | Space separated listed of client roles (e.g, 'role') to create that are associated with this client |
+| KC_ASSIGNED_CLIENT_ROLES | Space separated listed of client roles (e.g, 'client_id/role') assigned to client's service account.  NOT created if missing. |
 
 **Notes on Default Configuration:**
 - Additional environment variables are set in [00_config.env](https://github.com/JeffersonLab/keycloak/blob/main/scripts/defaults/00_config.env).  These can only be overridden by replacing this file or providing an additional env file to be sourced after.
