@@ -46,7 +46,7 @@ Environment variables:
 | KC_REDIRECT_URIS | Allowed redirect URIs for the client |
 | KC_UPDATE_CLIENT_ROLES_MAPPER | If set to true, adds 'roles' claims to ID token and user info endpoint (optional) |
 | KC_ASSIGNED_REALM_ROLES | Space separated listed of realm roles assigned to client's service account.  Created if missing. |
-| KC_PROVIDES_CLIENT_ROLES | Space separated listed of client roles (e.g, 'role') to create that are associated with this client |
+| KC_PROVIDES_CLIENT_ROLES | Space separated listed of client roles (e.g, 'role') to create that are associated with this client.  Assigned as 'client_id/role'. |
 | KC_ASSIGNED_CLIENT_ROLES | Space separated listed of client roles (e.g, 'client_id/role') assigned to client's service account.  NOT created if missing. |
 
 **Notes on Default Configuration:**
