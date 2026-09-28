@@ -48,6 +48,7 @@ Environment variables:
 | KC_ASSIGNED_REALM_ROLES | Space separated listed of realm roles assigned to client's service account.  Created if missing. |
 | KC_PROVIDES_CLIENT_ROLES | Space separated listed of client roles (e.g, 'role') to create that are associated with this client.  Assigned as 'client_id/role'. |
 | KC_ASSIGNED_CLIENT_ROLES | Space separated listed of client roles (e.g, 'client_id/role') assigned to client's service account.  NOT created if missing. |
+| KC_SKIP_DEFAULT_SETUP | If set to true, skips the default setup scripts (the unmodified copies of [defaults](https://github.com/JeffersonLab/keycloak/tree/main/scripts/defaults) in `/container-entrypoint-initdb.d`), so Keycloak starts with only the master realm and bootstrap admin.  Other scripts in `/container-entrypoint-initdb.d` still run (optional) |
 
 **Notes on Default Configuration:**
 - Additional environment variables are set in [00_config.env](https://github.com/JeffersonLab/keycloak/blob/main/scripts/defaults/00_config.env).  These can only be overridden by replacing this file or providing an additional env file to be sourced after.
@@ -55,6 +56,12 @@ Environment variables:
 - Four users are created all with the password `password`: jadams, jdoe, jsmith, and tbrown
 - All users have ${KC_RESOURCE}-user role.  jdoe and tbrown have ${KC_RESOURCE}-admin role
 - Client has KC_UPDATE_CLIENT_ROLES_MAPPER unset by default
+
+**Notes on Setup and Persistence:**
+- The setup scripts run once, after Keycloak first starts, and then the entrypoint writes a `setup-complete` marker file.  The container is healthy only once the marker exists and Keycloak responds at KC_BACKEND_URL.
+- With the default embedded (dev-file) database the marker is written to `/opt/keycloak/data/setup-complete`, next to the database.  If you mount a volume at `/opt/keycloak/data`, a recreated container keeps its realm and skips setup.  Without a volume, a new container starts fresh and runs setup again.
+- With an external database (e.g. `KC_DB=oracle`) the marker is written to `/opt/keycloak/setup-complete`, in the container itself, so a recreated container runs the setup scripts again against the existing database.  Set `KC_SKIP_DEFAULT_SETUP=true` (or make your own scripts idempotent) if the database outlives the container.
+- The entrypoint runs until Keycloak exits and then exits with Keycloak's status, so Docker restart policies (e.g. `restart: unless-stopped`) apply if Keycloak stops.  `docker stop` is passed on to Keycloak for a clean shutdown.
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
