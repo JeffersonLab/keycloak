@@ -191,6 +191,18 @@ ${KC_HOME}/bin/kcadm.sh add-roles \
                               --rolename "${KC_ROLE_NAME}"
 }
 
+# The LDAP provider's component ID, which is part of each user's ID (the sub claim) when user import
+# is off: f:<provider ID>:<username>.  Keycloak expects a UUID or exactly 22 characters of letters,
+# digits, _ and -, and logs a warning at each login otherwise.  A generated ID would change on every
+# new install and with it every user's ID, so derive one from the realm that stays the same.
+ldap_provider_id() {
+if [ -n "${KC_PROVIDER_ID}" ] ; then
+  echo "${KC_PROVIDER_ID}"
+else
+  printf '%s' "${KC_REALM}-ldap-provider" | sha256sum | cut -c1-22
+fi
+}
+
 create_ldap_storage_provider() {
 VARIABLES=(KC_BIND_CREDENTIAL
            KC_BIND_DN
@@ -218,7 +230,7 @@ done
 ${KC_HOME}/bin/kcadm.sh create components \
 -r "${KC_REALM}" \
 -s parentId="${KC_REALM}" \
--s id=${KC_REALM}-ldap-provider \
+-s id="$(ldap_provider_id)" \
 -s name=${KC_REALM}-ldap-provider \
 -s providerId=ldap \
 -s providerType=org.keycloak.storage.UserStorageProvider \
@@ -285,7 +297,7 @@ done
 
 ${KC_HOME}/bin/kcadm.sh create components \
 -r ${KC_REALM} \
--s parentId=${KC_REALM}-ldap-provider \
+-s parentId="$(ldap_provider_id)" \
 -s id=${KC_REALM}-ldap-role-mapper \
 -s name=${KC_REALM}-ldap-role-mapper \
 -s providerId=role-ldap-mapper \
@@ -312,9 +324,12 @@ for i in "${!VARIABLES[@]}"; do
   [ -z "${!var}" ] && { echo "$var is not set. Exiting."; exit 1; }
 done
 
+# KC_PROVIDER may be the provider's name, as ${KC_REALM}-ldap-provider now is, or its ID.
+PROVIDER_ID=`${KC_HOME}/bin/kcadm.sh get components -r ${KC_REALM} -q name="${KC_PROVIDER}" --fields id | jq -r '.[0].id // empty'`
+
 ${KC_HOME}/bin/kcadm.sh create \
                               -r ${KC_REALM} \
-                              user-storage/${KC_PROVIDER}/sync?action=triggerFullSync
+                              user-storage/${PROVIDER_ID:-${KC_PROVIDER}}/sync?action=triggerFullSync
 }
 
 create_idp() {

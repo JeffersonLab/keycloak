@@ -48,6 +48,7 @@ Environment variables:
 | KC_ASSIGNED_REALM_ROLES | Space separated listed of realm roles assigned to client's service account.  Created if missing. |
 | KC_PROVIDES_CLIENT_ROLES | Space separated listed of client roles (e.g, 'role') to create that are associated with this client.  Assigned as 'client_id/role'. |
 | KC_ASSIGNED_CLIENT_ROLES | Space separated listed of client roles (e.g, 'client_id/role') assigned to client's service account.  NOT created if missing. |
+| KC_PROVIDER_ID | The LDAP provider's component ID (optional).  Defaults to 22 characters derived from KC_REALM, the same on every install.  Must be a UUID or exactly 22 letters, digits, `_` and `-`.  See [Notes on LDAP](https://github.com/JeffersonLab/keycloak#configure) |
 | KC_SKIP_DEFAULT_SETUP | If set to true, skips the default setup scripts (the unmodified copies of [defaults](https://github.com/JeffersonLab/keycloak/tree/main/scripts/defaults) in `/container-entrypoint-initdb.d`), so Keycloak starts with only the master realm and bootstrap admin.  Other scripts in `/container-entrypoint-initdb.d` still run (optional) |
 
 **Notes on Default Configuration:**
@@ -62,6 +63,15 @@ Environment variables:
 - With the default embedded (dev-file) database the marker is written to `/opt/keycloak/data/setup-complete`, next to the database.  If you mount a volume at `/opt/keycloak/data`, a recreated container keeps its realm and skips setup.  Without a volume, a new container starts fresh and runs setup again.
 - With an external database (e.g. `KC_DB=oracle`) the marker is written to `/opt/keycloak/setup-complete`, in the container itself, so a recreated container runs the setup scripts again against the existing database.  Set `KC_SKIP_DEFAULT_SETUP=true` (or make your own scripts idempotent) if the database outlives the container.
 - The entrypoint runs until Keycloak exits and then exits with Keycloak's status, so Docker restart policies (e.g. `restart: unless-stopped`) apply if Keycloak stops.  `docker stop` is passed on to Keycloak for a clean shutdown.
+
+**Notes on LDAP:**
+- `create_ldap_storage_provider` names the provider `${KC_REALM}-ldap-provider`, and gives it a component ID from `KC_PROVIDER_ID` or else derived from `KC_REALM`.  With `KC_IMPORT` off, each user's ID (the `sub` claim) is `f:<component ID>:<username>`, which stays the same when Keycloak is reinstalled from scripts.  Changing the component ID changes every user's ID, which breaks clients that store it.
+- Keycloak logs `The given key is not a valid key per specification` at each login when the component ID is not a UUID or exactly 22 characters of letters, digits, `_` and `-`.
+- With `KC_IMPORT` off, users and their memberships are read from LDAP, but **you must sync new LDAP groups by hand**.  Keycloak's scheduled sync, which also creates roles, only runs with import on, and the admin console disables the provider's sync actions.  A new group has no Keycloak role until a sync runs or one of its members logs in.  After adding a group, or on your own schedule, call `run_user_storage_sync`, or sync only the role mapper, with your realm in place of `ace`:
+  ```
+  kcadm.sh create "user-storage/$(kcadm.sh get components -r ace -q name=ace-ldap-provider --fields id | jq -r .[0].id)/mappers/ace-ldap-role-mapper/sync?direction=fedToKeycloak" -r ace
+  ```
+  Syncing only adds roles: a role whose group was removed from LDAP stays in Keycloak until you delete it.
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
