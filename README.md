@@ -64,6 +64,11 @@ Environment variables:
 - With an external database (e.g. `KC_DB=oracle`) the marker is written to `/opt/keycloak/setup-complete`, in the container itself, so a recreated container runs the setup scripts again against the existing database.  Set `KC_SKIP_DEFAULT_SETUP=true` (or make your own scripts idempotent) if the database outlives the container.
 - The entrypoint runs until Keycloak exits and then exits with Keycloak's status, so Docker restart policies (e.g. `restart: unless-stopped`) apply if Keycloak stops.  `docker stop` is passed on to Keycloak for a clean shutdown.
 
+**Notes on Client Tools:**
+- `/kc-lib.sh` holds the setup functions.  Source it from your own scripts and set the variables each function needs, as the [defaults](https://github.com/JeffersonLab/keycloak/tree/main/scripts/defaults) do, or run it with env files and the functions to call, in order: `/kc-lib.sh -e /my.env login create_realm create_client`.  It stops at the first function that fails.  `/kc-lib.sh --help` lists the functions and the variables each one needs.
+- A function whose variables are missing says which, and returns non-zero; it never exits the shell that sourced the library.
+- The older wrappers (`/realm-setup.sh`, `/client-setup.sh`, `/ldap-setup.sh`, ...) still take `ENV_FILE [FUNCTION]` and source `COMMON_ENV_FILE`, and run their default functions when none is named.  FUNCTION must be a `kc-lib.sh` function.
+
 **Notes on LDAP:**
 - `create_ldap_storage_provider` names the provider `${KC_REALM}-ldap-provider`, and gives it a component ID from `KC_PROVIDER_ID` or else derived from `KC_REALM`.  With `KC_IMPORT` off, each user's ID (the `sub` claim) is `f:<component ID>:<username>`, which stays the same when Keycloak is reinstalled from scripts.  Changing the component ID changes every user's ID, which breaks clients that store it.
 - Keycloak logs `The given key is not a valid key per specification` at each login when the component ID is not a UUID or exactly 22 characters of letters, digits, `_` and `-`.
