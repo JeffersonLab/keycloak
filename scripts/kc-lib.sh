@@ -61,6 +61,8 @@ create_realm() {
 # Optional: KC_ASSIGNED_REALM_ROLES: space-separated realm roles to give the service account,
 #           created if needed
 # Optional: KC_UPDATE_CLIENT_ROLES_MAPPER: true to also run update_client_roles_mapper
+# Optional: KC_TOKEN_AUDIENCES: space-separated client IDs to name as audiences in the client's
+#           tokens; also runs add_audience_mappers
 create_client() {
   _require_vars KC_CLIENT_NAME KC_HOME KC_REALM KC_REDIRECT_URIS KC_SECRET \
     KC_SERVICE_ACCOUNT_ENABLED || return
@@ -106,6 +108,10 @@ create_client() {
 
   if [[ "${KC_UPDATE_CLIENT_ROLES_MAPPER:-}" == true ]]; then
     update_client_roles_mapper || rc=1
+  fi
+
+  if [[ -n "${KC_TOKEN_AUDIENCES:-}" ]]; then
+    add_audience_mappers || rc=1
   fi
   return "${rc}"
 }
@@ -371,6 +377,45 @@ update_client_roles_mapper() {
 
   _kcadm create "clients/${KC_CLIENT_NAME}/protocol-mappers/models" -r "${KC_REALM}" \
     -f <(echo "${mapper}")
+}
+
+#### Audience in tokens
+
+# Names each client in KC_TOKEN_AUDIENCES as an audience (the aud claim) of the access tokens that
+# Keycloak issues to the client KC_CLIENT_NAME, by adding an audience mapper for each to that
+# client. An application that checks the audience of the bearer tokens it is sent, such as one on
+# Wildfly with verify-token-audience, takes this client's tokens only if they name the
+# application's client. Keycloak doesn't name a client in the tokens it issues to that client
+# itself, so an application's own client needs it too. Skips an audience the client already has a
+# mapper for, so it can run again. Tries every audience even if one fails, and then returns
+# non-zero.
+# Required: KC_CLIENT_NAME KC_HOME KC_REALM
+# Required: KC_TOKEN_AUDIENCES: space-separated client IDs, such as 'my-app'
+add_audience_mappers() {
+  _require_vars KC_CLIENT_NAME KC_HOME KC_REALM KC_TOKEN_AUDIENCES || return
+  local rc=0 audience existing
+
+  # The audiences of the mappers the client has, whatever their names, one per line.
+  existing=$(_kcadm get "clients/${KC_CLIENT_NAME}/protocol-mappers/models" -r "${KC_REALM}" \
+    | jq -r '.[] | select(.protocolMapper=="oidc-audience-mapper")
+             | .config["included.client.audience"] // empty') || return
+
+  for audience in ${KC_TOKEN_AUDIENCES}; do
+    if grep -qxF -- "${audience}" <<< "${existing}"; then
+      _log "Client '${KC_CLIENT_NAME}' already names '${audience}' as an audience"
+      continue
+    fi
+
+    _log "Adding audience '${audience}' to the tokens of client '${KC_CLIENT_NAME}'"
+    _kcadm create "clients/${KC_CLIENT_NAME}/protocol-mappers/models" -r "${KC_REALM}" \
+      -s name="${audience}-audience" \
+      -s protocol=openid-connect \
+      -s protocolMapper=oidc-audience-mapper \
+      -s "config.\"included.client.audience\"=${audience}" \
+      -s 'config."access.token.claim"=true' \
+      -s 'config."id.token.claim"=false' || rc=1
+  done
+  return "${rc}"
 }
 
 #### Private helpers
